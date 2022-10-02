@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/auth/login_screen.dart';
+import 'package:grocery_app/screens/auth/login_signup_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Duration(seconds: 3),
         () => {
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()))
+                  MaterialPageRoute(builder: (context) => LoginSignUpScreen()))
             });
   }
 
@@ -27,11 +27,12 @@ class _SplashScreenState extends State<SplashScreen> {
     // ignore: prefer_const_constructors
     return Scaffold(
       backgroundColor: Colors.green,
-      body: const Center(
-          child: Image(
-        image: AssetImage('assets/icons/store.png'),
-        width: 500,
-      )),
+      body: Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Image(image: AssetImage('assets/icons/store.png'), width: 100),
+        Container(
+            padding: EdgeInsets.only(top: 5), child: Text("#AabAapKiApniDukan"))
+      ])),
     );
   }
 }

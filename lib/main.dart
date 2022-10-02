@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/auth/login_screen.dart';
+import 'package:grocery_app/screens/auth/login_signup_screen.dart';
 import 'package:grocery_app/screens/splash/splash_screen.dart';
 
 void main() {
@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const SplashScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
