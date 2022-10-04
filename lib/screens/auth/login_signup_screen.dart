@@ -54,6 +54,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                           // ignore: prefer_const_constructors
                           height: 50,
                           child: TextField(
+                            style: TextStyle(color: Colors.white),
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               hintText: "Phone number",
@@ -92,8 +93,9 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30)),
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor)))
+                                  // backgroundColor:
+                                      // Theme.of(context).primaryColor
+                                      )))
                     ],
                   ),
                 )
