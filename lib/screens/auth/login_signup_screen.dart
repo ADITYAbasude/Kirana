@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
+import 'package:grocery_app/screens/auth/otp_screen.dart';
 
 class LoginSignUpScreen extends StatefulWidget {
   const LoginSignUpScreen({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: ScrollConfiguration(
             behavior: const ScrollBehavior(
                 // ignore: deprecated_member_use
@@ -24,11 +25,11 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
               children: [
                 Container(
                     height: MediaQuery.of(context).size.height / 1.5,
-                    child: Image(
+                    child: const Image(
                         image: AssetImage("assets/images/attraction.jpg"))),
                 Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  padding: EdgeInsets.all(10),
+                  margin: const EdgeInsets.only(left: 5, right: 5),
+                  padding: const EdgeInsets.all(10),
                   decoration: const BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.only(
@@ -46,22 +47,26 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                           child: Text(
                             "Login or SignUp your account",
                             textAlign: TextAlign.start,
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.white),
                           )),
                       // ignore: prefer_const_constructors
 
                       Container(
+                          height: 70,
                           // ignore: prefer_const_constructors
-                          height: 50,
                           child: TextField(
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
+                            maxLength: 10,
+                            maxLines: 1,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
+                              // errorMaxLines: 10,
                               hintText: "Phone number",
-                              hintStyle:
-                                  TextStyle(fontSize: 14, color: Colors.white),
+                              hintStyle: const TextStyle(
+                                  fontSize: 14, color: Colors.white),
                               border: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                       color: Colors.white, width: 10),
                                   borderRadius: BorderRadius.circular(30)),
                               prefixIcon: Row(
@@ -81,21 +86,24 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                           )),
 
                       Container(
-                          margin: EdgeInsets.only(top: 25),
+                          margin: const EdgeInsets.only(top: 25),
                           width: double.infinity,
                           height: 45,
                           child: ElevatedButton(
-                              onPressed: () => {},
-                              child: Text(
+                              onPressed: () => {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => OTPScreen()))
+                                  },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30)),
+                              ),
+                              child: const Text(
                                 "Send OTP",
                                 style: TextStyle(color: Colors.black),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30)),
-                                  // backgroundColor:
-                                      // Theme.of(context).primaryColor
-                                      )))
+                              )))
                     ],
                   ),
                 )
