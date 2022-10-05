@@ -37,7 +37,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               MaterialPageRoute(
                                   builder: (context) => OTPScreen()))
                         },
-                    child: Text("Continue")))
+                    child: const Text("Continue")))
           ])),
         ));
   }
