@@ -1,15 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_app/screens/auth/otp_screen.dart';
+import 'package:grocery_app/tools/Toast.dart';
 
 class LoginSignUpScreen extends StatefulWidget {
   const LoginSignUpScreen({Key? key}) : super(key: key);
+  static String verificationCode = "";
 
   @override
   State<LoginSignUpScreen> createState() => _LoginSignUpScreenState();
 }
 
 class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
+  final phoneNumberController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +65,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                             style: const TextStyle(color: Colors.white),
                             maxLength: 10,
                             maxLines: 1,
+                            controller: phoneNumberController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               // errorMaxLines: 10,
@@ -90,12 +97,9 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                           width: double.infinity,
                           height: 45,
                           child: ElevatedButton(
-                              onPressed: () => {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => OTPScreen()))
-                                  },
+                              onPressed: () async {
+                                _sendOTP();
+                              },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30)),
@@ -109,5 +113,22 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                 )
               ],
             ))));
+  }
+
+  Future<void> _sendOTP() async {
+    String phoneNumber = "+91${phoneNumberController.text}";
+    MakeToast().showToast(phoneNumber);
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
+          MakeToast().showToast(e.message.toString());
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          LoginSignUpScreen.verificationCode = verificationId;
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => OTPScreen()));
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {});
   }
 }

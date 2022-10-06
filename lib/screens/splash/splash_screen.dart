@@ -1,7 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/auth/login_signup_screen.dart';
+import 'package:grocery_app/screens/home/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -11,20 +16,34 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  FirebaseAuth auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
     Timer(
         Duration(seconds: 3),
         () => {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginSignUpScreen()))
+              // ignore: unnecessary_null_comparison
+              if (auth != null)
+                {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()))
+                }
+              else
+                {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LoginSignUpScreen()))
+                }
             });
   }
 
   @override
+  // ignore: duplicate_ignore
   Widget build(BuildContext context) {
-    // ignore: prefer_const_constructors
+    // ignore: prefer_const_constructor
     return Scaffold(
       backgroundColor: Colors.green,
       body: Center(
