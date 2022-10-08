@@ -37,8 +37,8 @@ class _OTPScreenState extends State<OTPScreen> {
                 },
                 length: 6,
                 animationDuration: Duration(microseconds: 500),
-                // androidSmsAutofillMethod:
-                //     AndroidSmsAutofillMethod.smsRetrieverApi,
+                androidSmsAutofillMethod:
+                    AndroidSmsAutofillMethod.smsRetrieverApi,
               ),
             ),
             Container(
