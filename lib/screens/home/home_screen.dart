@@ -25,6 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 2,
+      ),
+      body: screens[HomeScreen.itemIndex],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: ((value) {
@@ -38,30 +43,29 @@ class _HomeScreenState extends State<HomeScreen> {
           items: <BottomNavigationBarItem>[
             const BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.home_outlined,
+                  Icons.home_rounded,
                   size: iconSize,
                 ),
                 label: "Home"),
             const BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.shopping_bag_outlined,
+                  Icons.shopping_bag_rounded,
                   size: iconSize,
                 ),
                 label: "Orders"),
             const BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.storefront_outlined,
+                  Icons.storefront_rounded,
                   size: iconSize,
                 ),
                 label: "Seller"),
             const BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.account_circle_outlined,
+                  Icons.account_circle_rounded,
                   size: iconSize,
                 ),
                 label: "Profile")
           ]),
-      body: screens[HomeScreen.itemIndex],
     );
   }
 }
