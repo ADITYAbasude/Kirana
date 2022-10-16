@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:grocery_app/constants/GetPermissions.dart';
 import 'package:grocery_app/states/States.dart';
+import 'package:location/location.dart' as loc hide PermissionStatus;
 import 'package:permission_handler/permission_handler.dart';
 
 class StoresScreen extends StatefulWidget {
@@ -14,6 +15,8 @@ class StoresScreen extends StatefulWidget {
 
 var locationAccessStatus;
 var storageAccessStatus;
+
+loc.Location location = loc.Location();
 
 class _StoresScreenState extends State<StoresScreen> {
   @override
@@ -39,7 +42,7 @@ class _StoresScreenState extends State<StoresScreen> {
 
   LocationAccess() async {
     locationAccessStatus = await Permission.location.status;
-    storageAccessStatus = await Permission.storage.status;
+    // storageAccessStatus = await Permission.storage.status;
 
     if (locationAccessStatus == PermissionStatus.granted) {
       print("Granted");
@@ -47,11 +50,11 @@ class _StoresScreenState extends State<StoresScreen> {
       GetPermissions().LocationAccessRequest();
     }
 
-    if (storageAccessStatus == PermissionStatus.granted) {
-      print("Granted");
-    } else {
-      GetPermissions().StorageAccessRequest();
-    }
+    // if (storageAccessStatus == PermissionStatus.granted) {
+    //   print("Granted");
+    // } else {
+    //   GetPermissions().StorageAccessRequest();
+    // }
   }
 
   void ShowBottomSheet() {
@@ -86,5 +89,11 @@ class _StoresScreenState extends State<StoresScreen> {
             ),
           );
         });
+  }
+
+  Future RequestGpsService() async {
+    if (!await location.serviceEnabled()) {
+      location.requestService();
+    }
   }
 }

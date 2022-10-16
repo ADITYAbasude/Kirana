@@ -1,0 +1,3 @@
+class States {
+  var locationAccess;
+}
