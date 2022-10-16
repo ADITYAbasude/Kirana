@@ -20,14 +20,29 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(backgroundColor: Colors.transparent),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          elevation: 2,
+          title: const Text("OTP Verificaton"),
+        ),
         body: ScrollConfiguration(
           behavior: ScrollBehavior(
               androidOverscrollIndicator: AndroidOverscrollIndicator.stretch),
           child: SingleChildScrollView(
               child: Column(children: [
             Container(
-              margin: EdgeInsets.only(top: 100),
+              width: MediaQuery.of(context).size.width / 1.5,
+              child: Image.asset("assets/images/otpAnim.gif"),
+            ),
+            Container(
+              child: const Text(
+                "Verify your phone number with OTP",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10, left: 40, right: 40),
               alignment: Alignment.center,
               child: Pinput(
                 onChanged: (value) {
