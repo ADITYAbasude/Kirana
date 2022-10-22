@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
@@ -37,18 +35,22 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                 children: [
                   Container(
                       height: MediaQuery.of(context).size.height / 1.5,
+                      alignment: Alignment.center,
                       child: const Image(
                           image: AssetImage("assets/images/attraction.jpg"))),
                   Container(
-                    margin: const EdgeInsets.only(left: 5, right: 5),
+                    margin:
+                        const EdgeInsets.only(left: 5, right: 5, bottom: 10),
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
+                            topRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20))),
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height / 3,
+                    height: 250,
                     child: Column(
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
@@ -99,14 +101,21 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                                 prefixIcon: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Text(
-                                      '+91',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14),
-                                    ),
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          '+91 ',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14),
+                                        )),
+                                    Container(
+                                      height: 30,
+                                      child:
+                                          VerticalDivider(color: Colors.white),
+                                    )
                                   ],
                                 ),
                               ),
@@ -136,10 +145,15 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
           Visibility(
               visible: _showProgressBar,
               child: Positioned(
-                  top: MediaQuery.of(context).size.height / 2,
-                  left: MediaQuery.of(context).size.width / 2.5,
-                  child: const CircularProgressIndicator(
-                    color: Colors.green,
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ),
                   )))
         ]));
   }

@@ -42,6 +42,7 @@ dependencies:
   pinput: ^2.2.14
   permission_handler: ^10.1.0
   location: ^4.4.0
+  flutterfire_cli: ^0.2.6
 
 dev_dependencies:
   flutter_test:

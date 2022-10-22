@@ -32,17 +32,18 @@ class _OTPScreenState extends State<OTPScreen> {
           child: SingleChildScrollView(
               child: Column(children: [
             Container(
-              width: MediaQuery.of(context).size.width / 1.5,
+              width: MediaQuery.of(context).size.width / 2.5,
               child: Image.asset("assets/images/otpAnim.gif"),
             ),
             Container(
+              margin: EdgeInsets.only(top: 50),
               child: const Text(
                 "Verify your phone number with OTP",
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10, left: 40, right: 40),
+              margin: EdgeInsets.only(top: 15, left: 40, right: 40),
               alignment: Alignment.center,
               child: Pinput(
                 onChanged: (value) {
