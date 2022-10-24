@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:grocery_app/screens/auth/login_signup_screen.dart';
-import 'package:grocery_app/screens/home/home_screen.dart';
+import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/tools/Toast.dart';
 import 'package:pinput/pinput.dart';
 
@@ -69,7 +69,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
+                                builder: (context) => MainScreen()));
                       }
                     },
                     child: const Text("Continue")))

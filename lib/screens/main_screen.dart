@@ -5,16 +5,16 @@ import 'package:grocery_app/screens/seller/seller_screen.dart';
 import 'package:grocery_app/screens/stores/stores_screens.dart';
 import 'package:grocery_app/tools/Toast.dart';
 
-class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class MainScreen extends StatefulWidget {
+  MainScreen({Key? key}) : super(key: key);
   static int itemIndex = 0;
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 const double iconSize = 25;
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MainScreenState extends State<MainScreen> {
   final screens = [
     StoresScreen(),
     OrderScreen(),
@@ -29,15 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
       //   backgroundColor: Theme.of(context).primaryColor,
       //   elevation: 2,
       // ),
-      body: screens[HomeScreen.itemIndex],
+      body: screens[MainScreen.itemIndex],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: ((value) {
             setState(() {
-              HomeScreen.itemIndex = value;
+              MainScreen.itemIndex = value;
             });
           }),
-          currentIndex: HomeScreen.itemIndex,
+          currentIndex: MainScreen.itemIndex,
           // selectedIconTheme:  selectedIcons[selectedIcons],
           // ignore: prefer_const_literals_to_create_immutables
           items: <BottomNavigationBarItem>[
