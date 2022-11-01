@@ -25,21 +25,21 @@ class _SplashScreenState extends State<SplashScreen> {
         Duration(seconds: 3),
         () => {
               // ignore: unnecessary_null_comparison
-              // if (auth != null)
-              //   {
-              //     Navigator.pushReplacement(context,
-              //         MaterialPageRoute(builder: (context) => MainScreen()))
-              //   }
-              // else
-              //   {
-              //     Navigator.pushReplacement(
-              //         context,
-              //         MaterialPageRoute(
-              //             builder: (context) => LoginSignUpScreen()))
-              //   }
+              if (auth != null)
+                {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => MainScreen()))
+                }
+              else
+                {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LoginSignUpScreen()))
+                }
 
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => MainScreen()))
+              // Navigator.pushReplacement(context,
+              //     MaterialPageRoute(builder: (context) => LoginSignUpScreen()))
             });
   }
 

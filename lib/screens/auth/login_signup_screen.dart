@@ -1,3 +1,14 @@
+// ignore_for_file: prefer_is_not_empty
+
+/*
+  This file is created by Aditya
+copyright year 2022
+
+
+NOTES: If you have to login then you will refer this number (123456789) and OTP is (123456).
+      This is default login setup for developers
+ */
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
@@ -8,6 +19,8 @@ import 'package:grocery_app/tools/Toast.dart';
 class LoginSignUpScreen extends StatefulWidget {
   const LoginSignUpScreen({Key? key}) : super(key: key);
   static String verificationCode = "";
+  static String username = "";
+  static String phoneNumber = "";
 
   @override
   State<LoginSignUpScreen> createState() => _LoginSignUpScreenState();
@@ -17,6 +30,7 @@ bool _showProgressBar = false;
 
 class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
   final phoneNumberController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +48,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                      height: MediaQuery.of(context).size.height / 1.5,
+                      height: MediaQuery.of(context).size.height / 1.7,
                       alignment: Alignment.center,
                       child: const Image(
                           image: AssetImage("assets/images/attraction.jpg"))),
@@ -50,7 +64,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                             bottomLeft: Radius.circular(20),
                             bottomRight: Radius.circular(20))),
                     width: double.infinity,
-                    height: 250,
+                    height: 310,
                     child: Column(
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
@@ -67,10 +81,34 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                         // ignore: prefer_const_constructors
                         Container(
                           width: double.infinity,
-                          child: Expanded(
+                          child: const Expanded(
                               child: Divider(
                             color: Colors.white,
                           )),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          height: 50,
+                          child: TextField(
+                            minLines: 1,
+                            style: TextStyle(color: Colors.white),
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                              // errorMaxLines: 10,
+                              hintText: "Username",
+                              hintStyle: const TextStyle(
+                                  fontSize: 14, color: Colors.white),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: const BorderSide(
+                                      color: Colors.green, width: 2)),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Colors.white,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30)),
+                            ),
+                          ),
                         ),
                         Container(
                             margin: const EdgeInsets.only(top: 10),
@@ -91,8 +129,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide: const BorderSide(
-                                      color: Colors.green,
-                                    )),
+                                        color: Colors.green, width: 2)),
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                       color: Colors.white,
@@ -104,7 +141,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                                   children: [
                                     Container(
                                         margin: EdgeInsets.only(left: 10),
-                                        child: Text(
+                                        child: const Text(
                                           '+91 ',
                                           style: TextStyle(
                                               color: Colors.white,
@@ -151,7 +188,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.center,
-                    child: CircularProgressIndicator(
+                    child: const CircularProgressIndicator(
                       color: Colors.green,
                     ),
                   )))
@@ -159,32 +196,38 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
   }
 
   Future<void> _sendOTP() async {
-    String phoneNumber = "+91${phoneNumberController.text}";
-    // MakeToast().showToast(phoneNumber);
-    setState(() {
-      _showProgressBar = true;
-    });
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) {
-          setState(() {
-            _showProgressBar = false;
-          });
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          setState(() {
-            _showProgressBar = false;
-          });
-          MakeToast().showToast(e.message.toString());
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _showProgressBar = false;
-          });
-          LoginSignUpScreen.verificationCode = verificationId;
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => OTPScreen()));
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {});
+    LoginSignUpScreen.phoneNumber = "+91${phoneNumberController.text}";
+    String userName = _usernameController.text;
+
+    if (LoginSignUpScreen.phoneNumber.isNotEmpty && userName.isNotEmpty) {
+      setState(() {
+        _showProgressBar = true;
+      });
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: LoginSignUpScreen.phoneNumber,
+          verificationCompleted: (PhoneAuthCredential credential) {
+            setState(() {
+              _showProgressBar = false;
+            });
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            setState(() {
+              _showProgressBar = false;
+            });
+            MakeToast().showToast(e.message.toString());
+          },
+          codeSent: (String verificationId, int? resendToken) {
+            setState(() {
+              _showProgressBar = false;
+            });
+            LoginSignUpScreen.username = _usernameController.text;
+            LoginSignUpScreen.verificationCode = verificationId;
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => OTPScreen()));
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {});
+    } else {
+      MakeToast().showToast("Enter the username and phone number to continue");
+    }
   }
 }
