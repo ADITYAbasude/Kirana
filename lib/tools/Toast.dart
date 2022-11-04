@@ -8,8 +8,8 @@ class MakeToast {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        textColor: Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        textColor: const Color.fromARGB(255, 0, 0, 0),
         fontSize: 16.0);
   }
 }

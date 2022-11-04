@@ -44,6 +44,11 @@ dependencies:
   location: ^4.4.0
   flutterfire_cli: ^0.2.6
   google_maps_flutter: ^2.2.1
+  image_picker: ^0.8.6
+  cached_network_image: ^3.2.2
+  firebase_storage: ^10.3.11
+  cloud_firestore: ^3.5.1
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

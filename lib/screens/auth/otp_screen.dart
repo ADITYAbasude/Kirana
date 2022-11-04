@@ -5,6 +5,7 @@ This file is created by Aditya
 copyright year 2022
 */
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
-  late DatabaseReference ref;
+  late CollectionReference ref;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   String? _smsCode;
@@ -30,7 +31,7 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void initState() {
     super.initState();
-    ref = FirebaseDatabase.instance.ref().child('Users');
+    ref = FirebaseFirestore.instance.collection("Users");
   }
 
   @override
@@ -106,7 +107,12 @@ not, if not then it will stop the login process else it will continue the login 
 
     await auth.signInWithCredential(credential).then((value) {
       String uid = value.user!.uid;
-      ref.child(uid).child('UserData').set(userDate).whenComplete(() {
+      ref
+          .doc(uid)
+          .collection('UserData')
+          .doc('info')
+          .set(userDate)
+          .whenComplete(() {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MainScreen()));
       });

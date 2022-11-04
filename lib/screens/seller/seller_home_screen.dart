@@ -1,3 +1,8 @@
+/* 
+This file is created by Aditya
+copyright year 2022
+*/
+
 import 'package:flutter/material.dart';
 
 class SellerHomeScreen extends StatefulWidget {

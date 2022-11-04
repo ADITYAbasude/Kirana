@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
 import 'package:grocery_app/screens/profile/profile_screen.dart';
+import 'package:grocery_app/screens/seller/seller_home_screen.dart';
 import 'package:grocery_app/screens/seller/seller_screen.dart';
 import 'package:grocery_app/screens/stores/stores_screens.dart';
 import 'package:grocery_app/tools/Toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class MainScreen extends StatefulWidget {
 }
 
 const double iconSize = 25;
+String exist = "";
 
 class _MainScreenState extends State<MainScreen> {
   final screens = [
@@ -24,12 +28,15 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _checkSeller();
     return Scaffold(
       // appBar: AppBar(
       //   backgroundColor: Theme.of(context).primaryColor,
       //   elevation: 2,
       // ),
-      body: screens[MainScreen.itemIndex],
+      body: MainScreen.itemIndex == 2 && exist == "seller"
+          ? SellerHomeScreen()
+          : screens[MainScreen.itemIndex],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: ((value) {
@@ -67,5 +74,10 @@ class _MainScreenState extends State<MainScreen> {
                 label: "Profile")
           ]),
     );
+  }
+
+  Future _checkSeller() async {
+    final prefs = await SharedPreferences.getInstance();
+    exist = prefs.getString('seller').toString();
   }
 }
