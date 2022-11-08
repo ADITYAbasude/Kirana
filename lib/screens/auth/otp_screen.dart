@@ -41,7 +41,17 @@ class _OTPScreenState extends State<OTPScreen> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 2,
-          title: const Text("OTP Verificaton"),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: (() {
+                Navigator.pop(context);
+              }),
+              icon: const Icon(
+                Icons.arrow_back_ios_rounded,
+                color: Colors.white,
+              )),
+          title: const Text("OTP verification",
+              style: TextStyle(color: Colors.white)),
         ),
         body: ScrollConfiguration(
           behavior: const ScrollBehavior(
@@ -79,6 +89,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 margin: const EdgeInsets.only(top: 50, left: 50, right: 50),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
                         padding: EdgeInsets.all(10),
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -86,7 +97,10 @@ class _OTPScreenState extends State<OTPScreen> {
                     onPressed: () async {
                       _verifyPhoneNumber();
                     },
-                    child: const Text("Continue")))
+                    child: const Text(
+                      "Continue",
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    )))
           ])),
         ));
   }

@@ -81,10 +81,9 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                         // ignore: prefer_const_constructors
                         Container(
                           width: double.infinity,
-                          child: const Expanded(
-                              child: Divider(
+                          child: const Divider(
                             color: Colors.white,
-                          )),
+                          ),
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 10),
@@ -167,6 +166,8 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                                   _sendOTP();
                                 },
                                 style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30)),
                                 ),

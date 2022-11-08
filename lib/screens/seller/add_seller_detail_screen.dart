@@ -59,8 +59,19 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Seller detail"),
+          backgroundColor: Theme.of(context).primaryColor,
+          centerTitle: true,
+          title: const Text("Seller detail",
+              style: TextStyle(color: Colors.white)),
           elevation: 2,
+          leading: IconButton(
+              onPressed: (() {
+                Navigator.pop(context);
+              }),
+              icon: const Icon(
+                Icons.arrow_back_ios_rounded,
+                color: Colors.white,
+              )),
         ),
         body: Stack(
           children: [
@@ -305,8 +316,10 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                                   _saveDataInDB();
                                 }
                               : null,
-                          child: const Text("Continue"),
+                          child: const Text("Continue",
+                              style: TextStyle(color: Colors.white)),
                           style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30))),
                         ))
@@ -370,7 +383,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
     final tempImage = File(image.path);
 
     setState(() {
-      this._image = tempImage;
+      _image = tempImage;
       _showCamera = false;
     });
   }
