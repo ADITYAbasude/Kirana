@@ -6,10 +6,10 @@ copyright year 2022
 */
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/tools/Toast.dart';
@@ -18,28 +18,39 @@ import 'package:uuid/uuid.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({Key? key}) : super(key: key);
+  static List products = [];
 
   @override
   State<SellerHomeScreen> createState() => _SellerHomeScreen();
 }
 
+// textfield controllers
 final _productNameController = TextEditingController();
 final _productPriceController = TextEditingController();
 
 // ignore: prefer_typing_uninitialized_variables
 var downloadUrl;
 
-//  progressBar visible
+//  progressBar for visibility
 bool _loading = false;
 
 // bool for textfield error
 bool _productNameError = false;
 bool _productPriceError = false;
 
+// uid of user
+final uid = FirebaseAuth.instance.currentUser!.uid;
+
 class _SellerHomeScreen extends State<SellerHomeScreen> {
   File? _image;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _getProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +58,94 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
         key: _scaffoldKey,
         appBar: AppBar(
           centerTitle: true,
+          automaticallyImplyLeading: false,
           title: const Text(
             "Dashboard",
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Theme.of(context).primaryColor,
         ),
+        body: RefreshIndicator(
+            strokeWidth: 3,
+            child: ListView(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 20, left: 20),
+                  child: Text(
+                    "Your Product",
+                    style: TextStyle(fontSize: 25),
+                  ),
+                ),
+                GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: SellerHomeScreen.products.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) {
+                      return Container(
+                          height: 500,
+                          child: Card(
+                            semanticContainer: true,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: InkWell(
+                                splashColor: Colors.blue.withAlpha(30),
+                                onTap: () {},
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                        child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        SellerHomeScreen.products[index]
+                                            .get('product_image'),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    )),
+                                    Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(0),
+                                              child: Text(
+                                                SellerHomeScreen.products[index]
+                                                    .get('product_name'),
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding: EdgeInsets.all(0),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .currency_rupee_rounded,
+                                                      size: 15,
+                                                    ),
+                                                    Text(
+                                                      SellerHomeScreen
+                                                          .products[index]
+                                                          .get('product_price'),
+                                                    ),
+                                                  ],
+                                                ))
+                                          ],
+                                        ))
+                                  ],
+                                )),
+                          ));
+                    })
+              ],
+            ),
+            onRefresh: () {
+              return Future.delayed(Duration(seconds: 1), () {
+                _getProducts();
+              });
+            }),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             showModalBottomSheet(
@@ -253,6 +346,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                             .text.isNotEmpty &&
                                                         _productPriceController
                                                             .text.isNotEmpty) {
+                                                      var uuid = Uuid().v1();
                                                       Reference ref =
                                                           FirebaseStorage
                                                               .instance
@@ -261,8 +355,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                               .child(uid)
                                                               .child(
                                                                   "products_image")
-                                                              .child(
-                                                                  Uuid().v1());
+                                                              .child(uuid);
                                                       UploadTask uploadTask =
                                                           ref.putFile(_image!);
                                                       await uploadTask
@@ -274,15 +367,18 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
 
                                                       Map<String, String>
                                                           addProductObject = {
-                                                        "product_image":
+                                                        'product_image':
                                                             downloadUrl
                                                                 .toString(),
-                                                        "product_name":
+                                                        'product_name':
                                                             _productNameController
                                                                 .text,
-                                                        "product_price":
+                                                        'product_price':
                                                             _productPriceController
-                                                                .text
+                                                                .text,
+                                                        'product_id':
+                                                            uuid.toString(),
+                                                        'seller_id': uid
                                                       };
 
                                                       FirebaseFirestore.instance
@@ -311,6 +407,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                             .text = "";
                                                         _productPriceController
                                                             .text = "";
+                                                        _getProducts();
                                                       });
                                                     } else {
                                                       setState(() {
@@ -366,5 +463,18 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
           ),
           icon: const Icon(Icons.add_rounded),
         ));
+  }
+
+  _getProducts() async {
+    SellerHomeScreen.products.clear();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('Sellers')
+        .doc(uid)
+        .collection('products')
+        .get();
+
+    setState(() {
+      SellerHomeScreen.products.addAll(querySnapshot.docs);
+    });
   }
 }
