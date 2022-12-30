@@ -1,18 +1,17 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
 
 /* 
 This file is created by Aditya
 copyright year 2022
 */
 
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/tools/Toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
@@ -27,6 +26,8 @@ class SellerHomeScreen extends StatefulWidget {
 // textfield controllers
 final _productNameController = TextEditingController();
 final _productPriceController = TextEditingController();
+final _productStockController = TextEditingController();
+final _productDescriptionController = TextEditingController();
 
 // ignore: prefer_typing_uninitialized_variables
 var downloadUrl;
@@ -38,8 +39,14 @@ bool _loading = false;
 bool _productNameError = false;
 bool _productPriceError = false;
 
+// lists
+List<String> units = ["/ 500 g", "/ 1 pack"];
+
 // uid of user
 final uid = FirebaseAuth.instance.currentUser!.uid;
+
+// default data variables
+String unitsCriteriaData = "/ 500 g";
 
 class _SellerHomeScreen extends State<SellerHomeScreen> {
   File? _image;
@@ -49,11 +56,16 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
   @override
   void initState() {
     super.initState();
+    _productStockController.text = "0";
     _getProducts();
   }
 
   @override
   Widget build(BuildContext context) {
+    String _unitsTypeValue = units.first;
+
+    // some Ui calculation
+    int ScreenWidth = (MediaQuery.of(context).size.width.toInt()) - 70;
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -68,6 +80,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
         body: RefreshIndicator(
             strokeWidth: 3,
             child: ListView(
+              physics: AlwaysScrollableScrollPhysics(),
               children: [
                 Container(
                   margin: EdgeInsets.only(top: 20, left: 20),
@@ -77,6 +90,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                   ),
                 ),
                 GridView.builder(
+                    physics: AlwaysScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: SellerHomeScreen.products.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -100,7 +114,9 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                       child: Image.network(
                                         SellerHomeScreen.products[index]
                                             .get('product_image'),
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
+                                        width: 150,
+                                        height: 120,
                                       ),
                                     )),
                                     Container(
@@ -237,11 +253,17 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                           child: _image == null
                                                               ? Image.asset(
                                                                   "assets/images/fruit.png",
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  width: 250,
+                                                                  height: 200,
                                                                 )
                                                               : Image.file(
                                                                   _image!,
                                                                   fit: BoxFit
-                                                                      .cover,
+                                                                      .fill,
+                                                                  width: 250,
+                                                                  height: 200,
                                                                 ),
                                                         )),
                                                     Visibility(
@@ -250,7 +272,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                             : false,
                                                         child: Positioned(
                                                             bottom: 10,
-                                                            right: 5,
+                                                            right: 10,
                                                             child:
                                                                 AnimatedOpacity(
                                                                     opacity:
@@ -275,9 +297,21 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                                             ))))))
                                                   ],
                                                 )),
+
+                                            //divider
+                                            Container(
+                                              margin: EdgeInsets.only(top: 10),
+                                              width: (ScreenWidth / 1) + 10,
+                                              child: Expanded(
+                                                  child: Divider(
+                                                color: Colors.black45,
+                                              )),
+                                            ),
+
+                                            // product name
                                             Container(
                                               margin: const EdgeInsets.only(
-                                                  top: 20, left: 30, right: 30),
+                                                  top: 10, left: 30, right: 30),
                                               child: TextField(
                                                   controller:
                                                       _productNameController,
@@ -290,36 +324,122 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                   )),
                                             ),
                                             Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 30, right: 30),
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                margin: const EdgeInsets.only(
+                                                    top: 20,
+                                                    left: 30,
+                                                    right: 30),
+                                                child: Row(
+                                                  children: [
+                                                    // price od product
+                                                    Container(
+                                                      width: ScreenWidth / 2,
+                                                      child: TextField(
+                                                        controller:
+                                                            _productPriceController,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        decoration: const InputDecoration(
+                                                            hintText: "Price",
+                                                            prefixIcon: Icon(Icons
+                                                                .currency_rupee_rounded),
+                                                            border: OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
+                                                                        width:
+                                                                            2))),
+                                                      ),
+                                                    ),
+
+                                                    // unit of product
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 10),
+                                                      width: ScreenWidth / 2,
+                                                      child:
+                                                          DropdownButtonFormField(
+                                                              decoration: const InputDecoration(
+                                                                  border:
+                                                                      OutlineInputBorder(),
+                                                                  label: Text(
+                                                                      "Units")),
+                                                              value:
+                                                                  _unitsTypeValue,
+                                                              onChanged:
+                                                                  (value) {
+                                                                unitsCriteriaData =
+                                                                    value
+                                                                        .toString();
+                                                              },
+                                                              items: units.map<
+                                                                  DropdownMenuItem<
+                                                                      String>>((String
+                                                                  value) {
+                                                                return DropdownMenuItem<
+                                                                    String>(
+                                                                  value: value,
+                                                                  child: Text(
+                                                                      value),
+                                                                );
+                                                              }).toList()),
+                                                    )
+                                                  ],
+                                                )),
+                                            // product description
+                                            Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 30, vertical: 20),
                                               child: TextField(
+                                                maxLines: 5,
                                                 controller:
-                                                    _productPriceController,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration: const InputDecoration(
-                                                    hintText: "Price",
-                                                    prefixIcon: Icon(Icons
-                                                        .currency_rupee_rounded),
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            width: 2))),
+                                                    _productDescriptionController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        hintText: "Description",
+                                                        border:
+                                                            OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
+                                                                        width:
+                                                                            2))),
                                               ),
                                             ),
+
+                                            // textfield for quantity of product
                                             Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 30, right: 30, top: 10),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "NOTE: Add amount as per kg",
-                                                style: TextStyle(
-                                                    color: Colors.red[900]),
-                                              ),
-                                            ),
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 30),
+                                                child: TextField(
+                                                  controller:
+                                                      _productStockController,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  decoration: InputDecoration(
+                                                      hintText: "Stock",
+                                                      helperText: unitsCriteriaData ==
+                                                              "/ 500 g"
+                                                          ? "${(int.parse(_productStockController.text) / 1000).toString()} kg"
+                                                          : _productStockController
+                                                              .text,
+                                                      suffixText:
+                                                          unitsCriteriaData ==
+                                                                  "/ 500 g"
+                                                              ? "gram"
+                                                              : "pack",
+                                                      border:
+                                                          OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                      width:
+                                                                          2))),
+                                                )),
+
+                                            // add button is here with db functions
                                             Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
+                                              width: ScreenWidth.toDouble(),
                                               margin: const EdgeInsets.only(
                                                   top: 50,
                                                   left: 30,
@@ -345,6 +465,10 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                         _productNameController
                                                             .text.isNotEmpty &&
                                                         _productPriceController
+                                                            .text.isNotEmpty &&
+                                                        _productDescriptionController
+                                                            .text.isNotEmpty &&
+                                                        _productStockController
                                                             .text.isNotEmpty) {
                                                       var uuid = Uuid().v1();
                                                       Reference ref =
@@ -373,9 +497,17 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                         'product_name':
                                                             _productNameController
                                                                 .text,
+                                                        'product_description':
+                                                            _productDescriptionController
+                                                                .text,
+                                                        'product_stock':
+                                                            _productStockController
+                                                                .text,
                                                         'product_price':
                                                             _productPriceController
                                                                 .text,
+                                                        'product_unit':
+                                                            unitsCriteriaData,
                                                         'product_id':
                                                             uuid.toString(),
                                                         'seller_id': uid
@@ -407,6 +539,10 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                             .text = "";
                                                         _productPriceController
                                                             .text = "";
+                                                        _productDescriptionController
+                                                            .text = "";
+                                                        _productStockController
+                                                            .text = "0";
                                                         _getProducts();
                                                       });
                                                     } else {
@@ -431,10 +567,12 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                                     style: TextStyle(
                                                         color: Colors.white),
                                                   )),
-                                            )
+                                            ),
                                           ],
                                         ),
                                       ),
+
+                                      // loading weight
                                       Visibility(
                                           visible: _loading,
                                           child: Container(

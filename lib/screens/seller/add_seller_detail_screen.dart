@@ -389,6 +389,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
   }
 
   void _saveDataInDB() async {
+    print("working or not");
     if (!_errorForShopAddress &&
         !_errorForShopContactNumber &&
         !_errorForShopName &&

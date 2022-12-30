@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 /* 
 This file is created by Aditya
 copyright year 2022
@@ -6,7 +8,6 @@ copyright year 2022
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/add_seller_detail_screen.dart';
-import 'package:grocery_app/screens/seller/seller_home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SellerScreen extends StatefulWidget {
@@ -37,11 +38,11 @@ class _SellerScreenState extends State<SellerScreen> {
                 Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: 80),
+                      // margin: EdgeInsets.only(top: 80),
                       child: Image.asset("assets/images/revenue.jpg"),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 30),
+                      // margin: EdgeInsets.only(top: 30),
                       child: const Text(
                         "Launch your business in just a minute",
                         style: TextStyle(fontSize: 18),
@@ -82,8 +83,8 @@ class _SellerScreenState extends State<SellerScreen> {
             AddSellerDetailScreen(),
         transitionsBuilder: ((context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.ease;
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
 
           var tween =
               Tween(begin: begin, end: end).chain(CurveTween(curve: curve));

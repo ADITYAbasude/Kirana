@@ -4,7 +4,7 @@ import 'package:grocery_app/screens/orders/orders_screen.dart';
 import 'package:grocery_app/screens/profile/profile_screen.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
 import 'package:grocery_app/screens/seller/seller_screen.dart';
-import 'package:grocery_app/screens/stores/stores_screens.dart';
+import 'package:grocery_app/screens/home/home_screens.dart';
 import 'package:grocery_app/tools/Toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +20,7 @@ String exist = "";
 
 class _MainScreenState extends State<MainScreen> {
   final screens = [
-    StoresScreen(),
+    HomeScreen(),
     OrderScreen(),
     SellerScreen(),
     ProfileScreen()
