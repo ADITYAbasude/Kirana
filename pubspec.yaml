@@ -52,6 +52,7 @@ dependencies:
   uuid: ^3.0.6
   geolocator: ^9.0.2
   geocoding: ^2.0.5
+  palette_generator: ^0.3.3+2
 
 dev_dependencies:
   flutter_test:
