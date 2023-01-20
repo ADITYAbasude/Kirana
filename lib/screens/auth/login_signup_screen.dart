@@ -5,14 +5,12 @@
 copyright year 2022
 
 
-NOTES: If you have to login then you will refer this number (123456789) and OTP is (123456).
+NOTES: If you have to login then you will refer this mobile number (1234567890) and OTP is (123456).
       This is default login setup for developers
  */
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:animations/animations.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_app/screens/auth/otp_screen.dart';
 import 'package:grocery_app/tools/Toast.dart';
 

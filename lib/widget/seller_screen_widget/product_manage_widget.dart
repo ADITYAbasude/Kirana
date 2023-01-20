@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables
 
 import 'dart:io';
 
@@ -36,7 +36,7 @@ List<String> units = ["/ 500 g", "/ 1 pc"];
 // default data variables
 String unitsCriteriaData = "/ 500 g";
 
-//  progressBar for visibility
+// bool for progressBar visibility
 bool _loading = false;
 
 class _ProductManageWidgetState extends State<ProductManageWidget> {
@@ -144,7 +144,6 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
         final snackBar = SnackBar(
           content: const Text("Add a proper data"),
           backgroundColor: Colors.redAccent[500],
-          // key: _scaffoldKey,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
@@ -387,7 +386,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                             ProductManageWidget.product_manage_status == "add"
                                 ? "Add"
                                 : "Edit",
-                            style: TextStyle(color: Colors.white),
+                            style:const  TextStyle(color: Colors.white),
                           )),
                     ),
                   ],

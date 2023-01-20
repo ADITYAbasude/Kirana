@@ -1,10 +1,14 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
 
 import '../../widget/seller_screen_widget/product_manage_widget.dart';
 
 class SellerProductDetailedScreen extends StatefulWidget {
-  // const SellerProductDetailedScreen({super.key});
+  // final Function callBackFunction;
+  const SellerProductDetailedScreen({super.key});
   static int? index;
   @override
   State<SellerProductDetailedScreen> createState() =>
@@ -17,10 +21,15 @@ class _SellerProductDetailedScreenState
       .products[SellerProductDetailedScreen.index!]
       .get('product_description');
 
-  int stock = int.parse(SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]
-          .get('product_stock')) ~/
-      1000;
+  String stock = SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+              .get('product_unit') ==
+          '/ 500 g'
+      ? (int.parse(SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+                  .get('product_stock')) /
+              1000)
+          .toString()
+      : SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+          .get('product_stock');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +40,8 @@ class _SellerProductDetailedScreenState
         elevation: 2,
         leading: IconButton(
             onPressed: (() {
-              Navigator.pop(context);
+              Navigator.pop(context,
+                  MaterialPageRoute(builder: (context) => SellerHomeScreen()));
             }),
             icon: const Icon(
               Icons.arrow_back_ios_rounded,
@@ -91,7 +101,7 @@ class _SellerProductDetailedScreenState
                         fontSize: 17, fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "Stock: ${stock} ${SellerHomeScreen.products[SellerProductDetailedScreen.index!].get('product_unit') == '/ 500 g' ? ' kg' : ' pc'}",
+                    "Stock: $stock ${SellerHomeScreen.products[SellerProductDetailedScreen.index!].get('product_unit') == '/ 500 g' ? ' kg' : ' pc'}",
                     style: const TextStyle(
                         fontSize: 17, fontWeight: FontWeight.w500),
                   )
@@ -139,11 +149,23 @@ class _SellerProductDetailedScreenState
                     );
                   });
             },
-            child: Icon(Icons.edit_rounded),
+            child: const Icon(Icons.edit_rounded),
           ),
           FloatingActionButton.small(
             heroTag: SellerProductDetailedScreen.index,
-            onPressed: () {},
+            onPressed: () {
+              FirebaseFirestore.instance
+                  .collection("Sellers")
+                  .doc(uid)
+                  .collection("products")
+                  .doc(SellerHomeScreen
+                      .products[SellerProductDetailedScreen.index!]
+                      .get('product_id'))
+                  .delete()
+                  .whenComplete(() {
+                Navigator.pop(context);
+              });
+            },
             child: Icon(Icons.delete_outline),
           )
         ],

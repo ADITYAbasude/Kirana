@@ -1,9 +1,15 @@
-
-import 'dart:ui';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:grocery_app/constants/ConstantValue.dart';
+import 'package:grocery_app/constants/SystemColors.dart';
+import 'package:grocery_app/screens/profile/my_address_screen.dart';
+import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
+import 'package:grocery_app/screens/profile/my_profile_screen.dart';
+import 'package:grocery_app/screens/profile/notification_screen.dart';
 import 'package:grocery_app/tools/Toast.dart';
+
+import '../../animations/screen_route_animation.dart';
+import '../../constants/user_info.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);
@@ -12,123 +18,273 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-final nameList = ["Saved address", "Account setting", "Support", "About"];
+// data
+final nameList = [
+  "My Profile",
+  "My Favorites",
+  "My Address",
+  "Notification",
+  "Help Center",
+  "Log Out"
+];
+final icons = [
+  Icons.account_circle_outlined,
+  Icons.favorite_border_rounded,
+  Icons.map_outlined,
+  Icons.notifications_outlined,
+  Icons.help_center_outlined,
+  Icons.logout_outlined
+];
+final differentColors = [
+  Colors.green,
+  Colors.black,
+  Colors.cyan,
+  Colors.yellow,
+  Colors.deepPurple,
+  Colors.red
+];
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Future<String> username = UserData.userName(uid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: CustomScrollView(
-      slivers: [
-        SliverAppBar(
-            pinned: true,
-            expandedHeight: 150.0,
-            flexibleSpace: const FlexibleSpaceBar(
-              titlePadding: EdgeInsets.all(10),
-              expandedTitleScale: 1,
-              title: Text(
-                'Person',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.left,
-              ),
-              background: Image(
-                image: AssetImage("assets/images/user.png"),
-                fit: BoxFit.cover,
-              ),
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.edit),
-                tooltip: 'Add new entry',
-                onPressed: () {/* ... */},
-              ),
-            ]),
-
-        SliverList(
-            delegate: SliverChildBuilderDelegate((BuildContext context, index) {
-          return Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    child: Text(
-                      nameList[index],
-                      style: TextStyle(fontSize: 20),
-                      // textScaleFactor: 2,
-                    ),
-                    onTap: () {
-                      MakeToast().showToast("clicked");
-                    },
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(
+            "Profile",
+            style: TextStyle(color: textColor),
+          ),
+          centerTitle: true,
+          backgroundColor: mainColor,
+        ),
+        body: Container(
+          height: getScreenSize(context).height,
+          width: getScreenSize(context).width,
+          child: Column(children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(children: [
+                // user img
+                Container(
+                  child: Stack(
+                    children: [
+                      Container(
+                          child: Container(
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(100)),
+                      )),
+                      Visibility(
+                          visible: true,
+                          child: Positioned(
+                              bottom: 5,
+                              right: 5,
+                              child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: mainColor,
+                                      borderRadius: BorderRadius.circular(50)),
+                                  child: const Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ))))
+                    ],
                   ),
-                  Container(
-                      width: double.infinity,
-                      child: Divider(
-                          // color: Colors.black,
-                          ))
-                ],
-              ));
-        }, childCount: nameList.length)
-            // SliverChildBuilderDelegate(
-            //   (BuildContext context, int index) {
-            //     return Container(
-            //       height: 100.0,
-            //       child: Center(
-            //         child: Text('$index', textScaleFactor: 5),
-            //       ),
-            //     );
-            //   },
-            //   childCount: 20,
-            // ),
+                ),
+
+                // user name
+                Container(
+                  margin: const EdgeInsets.only(top: 15),
+                  alignment: Alignment.center,
+                  child: FutureBuilder(
+                      future: username,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            snapshot.data.toString(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else {
+                          return const Text(
+                            "",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              // fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        }
+                      }),
+                ),
+
+                const Divider(
+                  indent: 20,
+                  endIndent: 20,
+                  thickness: 0.8,
+                ),
+              ]),
             ),
-        //   children: [
-        // Stack(
-        //   alignment: Alignment.center,
-        //   children: [
-        //     const Image(
-        //       image: AssetImage("assets/images/user.png"),
-        //       width: 130,
-        //     ),
-        //     Positioned(
-        //         bottom: 5,
-        //         right: 8,
-        //         child: Icon(
-        //           Icons.add_a_photo_outlined,
-        //           size: 30,
-        //           color: Colors.black.withOpacity(0.5),
-        //         ))
-        //   ],
-        // ),
-        // Container(
-        //   margin: const EdgeInsets.only(
-        //       right: 40, left: 40, top: 50, bottom: 30),
-        //   // ignore: prefer_const_constructors
-        //   child: TextField(
-        //     decoration:
-        //         // ignore: prefer_const_constructors
-        //         InputDecoration(
-        //             border: const OutlineInputBorder(),
-        //             hintText: "User Name"),
-        //   ),
-        // // ),
-        // Container(
-        //   margin: const EdgeInsets.only(right: 40, left: 40),
-        //   // ignore: prefer_const_constructors
-        //   child: TextField(
-        //     maxLines: 2,
-        //     maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        //     minLines: 1,
-        //     decoration:
-        //         // ignore: prefer_const_constructors
-        //         InputDecoration(
-        //       hintText: "PickUp Address",
-        //       border: const OutlineInputBorder(),
-        //     ),
-        //   ),
-        // )
-        //   ],
-        // )),
-      ],
-    ));
+            ListView.builder(
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: nameList.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      switch (index) {
+                        case 0:
+                          Navigator.of(context)
+                              .push(_myProfileRouteTranslation());
+                          break;
+                        case 1:
+                          Navigator.of(context)
+                              .push(_myFavoritesRouteTranslation());
+                          break;
+                        case 2:
+                          Navigator.of(context)
+                              .push(_myAddressRouteTranslation());
+                          break;
+                        case 3:
+                          Navigator.of(context)
+                              .push(_myNotificationRouteTranslation());
+                          break;
+                        case 4:
+                          Navigator.of(context)
+                              .push(_myAddressRouteTranslation());
+                          break;
+                        case 5:
+                          logOut(context);
+                          break;
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 5),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: const Color.fromARGB(58, 240, 234, 234),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                  color: differentColors
+                                      .elementAt(index)
+                                      .withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Icon(
+                                icons.elementAt(index),
+                                color: differentColors.elementAt(index),
+                              )),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              nameList.elementAt(index),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const Icon(Icons.keyboard_arrow_right_rounded)
+                        ],
+                      ),
+                    ),
+                  );
+                })
+          ]),
+        ));
+  }
+
+  void logOut(BuildContext context) {
+    FirebaseAuth.instance.signOut().whenComplete(() {
+      Navigator.popUntil(context, ModalRoute.withName('/'));
+    });
+  }
+
+  Route _myProfileRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const MyProfileScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
+  }
+
+  Route _myAddressRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const MyAddressScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
+  }
+
+  Route _myNotificationRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const NotificationScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
+  }
+
+  Route _myFavoritesRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const MyFavoritesScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
   }
 }

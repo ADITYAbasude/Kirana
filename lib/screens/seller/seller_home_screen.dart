@@ -51,12 +51,20 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
             "Dashboard",
             style: TextStyle(color: Colors.white),
           ),
+          actions: [
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.account_circle_outlined,
+                  color: Colors.white,
+                ))
+          ],
           backgroundColor: Theme.of(context).primaryColor,
         ),
         body: RefreshIndicator(
             strokeWidth: 3,
             child: ListView(
-              physics: BouncingScrollPhysics(),
+              physics: AlwaysScrollableScrollPhysics(),
               children: [
                 Container(
                   margin: EdgeInsets.only(top: 20, left: 20),
@@ -151,7 +159,18 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                             mini: true,
                             heroTag: index,
                             backgroundColor: Colors.green.shade500,
-                            onPressed: () {},
+                            onPressed: () {
+                              FirebaseFirestore.instance
+                                  .collection("Sellers")
+                                  .doc(uid)
+                                  .collection("products")
+                                  .doc(SellerHomeScreen.products[index]
+                                      .get('product_id'))
+                                  .delete()
+                                  .whenComplete(() {
+                                _getProducts();
+                              });
+                            },
                             child: Icon(Icons.delete_outlined),
                           ),
                           floatingActionButtonLocation:
@@ -206,9 +225,10 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
         .doc(uid)
         .collection('products')
         .get();
-
     setState(() {
       SellerHomeScreen.products.addAll(querySnapshot.docs);
     });
   }
+
+  // void _getProducts() async {}
 }
