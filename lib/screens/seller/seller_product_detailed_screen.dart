@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
 
@@ -18,18 +19,17 @@ class SellerProductDetailedScreen extends StatefulWidget {
 class _SellerProductDetailedScreenState
     extends State<SellerProductDetailedScreen> {
   final String _productDescription = SellerHomeScreen
-      .products[SellerProductDetailedScreen.index!]
-      .get('product_description');
+      .products[SellerProductDetailedScreen.index!]['product_description'];
 
   String stock = SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-              .get('product_unit') ==
+              ['product_unit'] ==
           '/ 500 g'
       ? (int.parse(SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-                  .get('product_stock')) /
+                  ['product_stock']) /
               1000)
           .toString()
       : SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-          .get('product_stock');
+          ['product_stock'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +56,7 @@ class _SellerProductDetailedScreenState
                 borderRadius: BorderRadius.circular(50),
                 child: Image.network(
                   SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-                      .get('product_image'),
+                      ['product_image'],
                   width: 300,
                   height: 250,
                   fit: BoxFit.cover,
@@ -72,7 +72,7 @@ class _SellerProductDetailedScreenState
                 child: Text(
                   // product name text widget
                   SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-                      .get('product_name'),
+                      ['product_name'],
                   style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
@@ -96,12 +96,12 @@ class _SellerProductDetailedScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Price: ₹ ${SellerHomeScreen.products[SellerProductDetailedScreen.index!].get('product_price')} ${SellerHomeScreen.products[SellerProductDetailedScreen.index!].get('product_unit')}",
+                    "Price: ₹ ${SellerHomeScreen.products[SellerProductDetailedScreen.index!]['product_price']} ${SellerHomeScreen.products[SellerProductDetailedScreen.index!]['product_unit']}",
                     style: const TextStyle(
                         fontSize: 17, fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "Stock: $stock ${SellerHomeScreen.products[SellerProductDetailedScreen.index!].get('product_unit') == '/ 500 g' ? ' kg' : ' pc'}",
+                    "Stock: $stock ${SellerHomeScreen.products[SellerProductDetailedScreen.index!]['product_unit'] == '/ 500 g' ? ' kg' : ' pc'}",
                     style: const TextStyle(
                         fontSize: 17, fontWeight: FontWeight.w500),
                   )
@@ -154,14 +154,10 @@ class _SellerProductDetailedScreenState
           FloatingActionButton.small(
             heroTag: SellerProductDetailedScreen.index,
             onPressed: () {
-              FirebaseFirestore.instance
-                  .collection("Sellers")
-                  .doc(uid)
-                  .collection("products")
-                  .doc(SellerHomeScreen
-                      .products[SellerProductDetailedScreen.index!]
-                      .get('product_id'))
-                  .delete()
+              FirebaseDatabase.instance
+                  .ref(
+                      'sellers/$uid/products/${SellerHomeScreen.products[SellerProductDetailedScreen.index!]['product_id']}')
+                  .remove()
                   .whenComplete(() {
                 Navigator.pop(context);
               });

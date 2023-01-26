@@ -48,27 +48,35 @@ class _MainScreenState extends State<MainScreen> {
           // selectedIconTheme:  selectedIcons[selectedIcons],
           // ignore: prefer_const_literals_to_create_immutables
           items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.home_rounded,
+                  MainScreen.itemIndex == 0
+                      ? Icons.dashboard_rounded
+                      : Icons.dashboard_outlined,
                   size: iconSize,
                 ),
                 label: "Home"),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.shopping_bag_rounded,
+                  MainScreen.itemIndex == 1
+                      ? Icons.shopping_bag_rounded
+                      : Icons.shopping_bag_outlined,
                   size: iconSize,
                 ),
                 label: "Orders"),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.storefront_rounded,
+                  MainScreen.itemIndex == 2
+                      ? Icons.storefront_rounded
+                      : Icons.storefront_outlined,
                   size: iconSize,
                 ),
                 label: "Seller"),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.account_circle_rounded,
+                  MainScreen.itemIndex == 3
+                      ? Icons.account_circle_rounded
+                      : Icons.account_circle_outlined,
                   size: iconSize,
                 ),
                 label: "Profile")

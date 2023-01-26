@@ -7,8 +7,10 @@ copyright year 2022
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_product_detailed_screen.dart';
+import 'package:grocery_app/tools/Toast.dart';
 import 'package:grocery_app/widget/seller_screen_widget/product_manage_widget.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -120,7 +122,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                               BorderRadius.circular(10),
                                           child: Image.network(
                                             SellerHomeScreen.products[index]
-                                                .get('product_image'),
+                                                ['product_image'],
                                             fit: BoxFit.cover,
                                             width: 150,
                                             height: 120,
@@ -132,7 +134,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                           alignment: Alignment.centerLeft,
                                           child: Text(
                                             SellerHomeScreen.products[index]
-                                                .get('product_name'),
+                                                ['product_name'],
                                             style: TextStyle(fontSize: 18),
                                           )),
                                       Container(
@@ -146,11 +148,11 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                               ),
                                               Text(
                                                 SellerHomeScreen.products[index]
-                                                    .get('product_price'),
+                                                    ['product_price'],
                                               ),
                                               Text(SellerHomeScreen
-                                                  .products[index]
-                                                  .get('product_unit'))
+                                                      .products[index]
+                                                  ['product_unit'])
                                             ],
                                           ))
                                     ],
@@ -160,13 +162,10 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                             heroTag: index,
                             backgroundColor: Colors.green.shade500,
                             onPressed: () {
-                              FirebaseFirestore.instance
-                                  .collection("Sellers")
-                                  .doc(uid)
-                                  .collection("products")
-                                  .doc(SellerHomeScreen.products[index]
-                                      .get('product_id'))
-                                  .delete()
+                              FirebaseDatabase.instance
+                                  .ref(
+                                      'sellers/$uid/products/${SellerHomeScreen.products[index]['product_id']}')
+                                  .remove()
                                   .whenComplete(() {
                                 _getProducts();
                               });
@@ -189,7 +188,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
           onPressed: () {
             ProductManageWidget.product_manage_status = "add";
             showModalBottomSheet(
-                isDismissible: false,
+                isDismissible: true,
                 isScrollControlled: true,
                 enableDrag: true,
                 context: context,
@@ -220,15 +219,17 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
 
   void _getProducts() async {
     SellerHomeScreen.products.clear();
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('Sellers')
-        .doc(uid)
-        .collection('products')
-        .get();
-    setState(() {
-      SellerHomeScreen.products.addAll(querySnapshot.docs);
+    FirebaseDatabase.instance
+        .ref('sellers')
+        .child(uid)
+        .child('products')
+        .get()
+        .then((value) {
+      for (var value in value.children) {
+        setState(() {
+          SellerHomeScreen.products.add(value.value);
+        });
+      }
     });
   }
-
-  // void _getProducts() async {}
 }

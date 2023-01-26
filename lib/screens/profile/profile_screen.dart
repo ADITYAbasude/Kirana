@@ -7,6 +7,7 @@ import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
 import 'package:grocery_app/screens/profile/my_profile_screen.dart';
 import 'package:grocery_app/screens/profile/notification_screen.dart';
 import 'package:grocery_app/tools/Toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../animations/screen_route_animation.dart';
 import '../../constants/user_info.dart';
@@ -45,7 +46,7 @@ final differentColors = [
 ];
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<String> username = UserData.userName(uid);
+  Future<dynamic> username = UserData.userName(uid);
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +208,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void logOut(BuildContext context) {
-    FirebaseAuth.instance.signOut().whenComplete(() {
+    FirebaseAuth.instance.signOut().whenComplete(() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove("seller");
       Navigator.popUntil(context, ModalRoute.withName('/'));
     });
   }

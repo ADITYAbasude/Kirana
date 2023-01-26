@@ -9,10 +9,12 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery_app/screens/main_screen.dart';
+import 'package:grocery_app/tools/SnackBar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,6 +47,9 @@ String shopCriteriaData = "Vegetable";
 // storage ref
 FirebaseStorage? fStorage;
 var downloadUrl;
+
+//db ref
+DatabaseReference dbRef = FirebaseDatabase.instance.ref('sellers');
 
 class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
   String _storeTypeValue = _storeTypeList.first;
@@ -389,8 +394,9 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
   }
 
   void _saveDataInDB() async {
-    print("working or not");
-    if (!_errorForShopAddress &&
+    if (_image == null) {
+      showSnackBar(context, "Add store image", color: Colors.red[700] as Color);
+    } else if (!_errorForShopAddress &&
         !_errorForShopContactNumber &&
         !_errorForShopName &&
         _image != null) {
@@ -408,30 +414,22 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
         downloadUrl = await ref.getDownloadURL(); // here we get an url of image
       });
 
-      var username = await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(uid)
-          .collection("UserData")
-          .doc("info")
-          .get();
+      var userNameData =
+          await FirebaseDatabase.instance.ref('users/$uid/info').get();
+
+      var username = userNameData.value as Map;
 
       Map<String, String> dataObject = {
-        'sellerImage': downloadUrl.toString(),
-        'shopName': shopNameData.toString(),
-        'shopAddress': shopAddressData.toString(),
-        'shopContactNumber': shopContactNumberData.toString(),
-        'shopCriteria': shopCriteriaData.toString(),
-        'id': uid,
-        "sellerName": username.get("name").toString()
+        'seller_image': downloadUrl.toString(),
+        'shop_name': shopNameData.toString(),
+        'shop_address': shopAddressData.toString(),
+        'shop_contact_number': shopContactNumberData.toString(),
+        'shop_criteria': shopCriteriaData.toString(),
+        'seller_id': uid,
+        "seller_name": username['name']
       };
 
-      FirebaseFirestore.instance
-          .collection("Sellers")
-          .doc(uid)
-          .collection("seller_data")
-          .doc("info")
-          .set(dataObject)
-          .whenComplete(() async {
+      dbRef.child('$uid/info').set(dataObject).whenComplete(() async {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('seller', "seller");
         setState(() {

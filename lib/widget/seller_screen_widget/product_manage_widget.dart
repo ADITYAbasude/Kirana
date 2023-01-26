@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
@@ -50,23 +51,19 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
     //set product value if it will in product editing
     if (ProductManageWidget.product_manage_status == "edit") {
       _productNameController.text = SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]
-          .get('product_name');
+          .products[SellerProductDetailedScreen.index!]['product_name'];
 
       _productPriceController.text = SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]
-          .get('product_price');
+          .products[SellerProductDetailedScreen.index!]['product_price'];
 
       _productDescriptionController.text = SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]
-          .get('product_description');
+          .products[SellerProductDetailedScreen.index!]['product_description'];
 
       _productStockController.text = SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]
-          .get('product_stock');
+          .products[SellerProductDetailedScreen.index!]['product_stock'];
 
       _image = SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-          .get('product_image');
+          ['product_image'];
     }
     // _getProducts();
   }
@@ -80,15 +77,17 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
 
     void create_or_edit_the_product() async {
       final uid = FirebaseAuth.instance.currentUser!.uid;
+      DatabaseReference pushKey =
+          FirebaseDatabase.instance.ref('sellers').push();
       if (_image != null &&
           _productNameController.text.isNotEmpty &&
           _productPriceController.text.isNotEmpty &&
           _productDescriptionController.text.isNotEmpty &&
           _productStockController.text.isNotEmpty) {
-        var uuid = ProductManageWidget.product_manage_status == "edit"
+        var pushId = ProductManageWidget.product_manage_status == "edit"
             ? SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-                .get('product_id')
-            : Uuid().v1();
+                ['product_id']
+            : pushKey.key;
 
         if (ProductManageWidget.product_img_editing == true) {
           Reference ref = FirebaseStorage.instance
@@ -96,7 +95,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
               .child("images")
               .child(uid)
               .child("products_image")
-              .child(uuid);
+              .child(pushId.toString());
           UploadTask uploadTask = ref.putFile(_image!);
           await uploadTask.whenComplete(() async {
             downloadUrl = await ref.getDownloadURL();
@@ -112,15 +111,17 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           'product_stock': _productStockController.text,
           'product_price': _productPriceController.text,
           'product_unit': unitsCriteriaData,
-          'product_id': uuid.toString(),
-          'seller_id': uid
+          'product_id': pushId,
+          'seller_id': uid,
+          'rating': '',
+          'rated_by': ''
         };
 
-        FirebaseFirestore.instance
-            .collection("Sellers")
-            .doc(uid)
-            .collection("products")
-            .doc(uuid)
+        FirebaseDatabase.instance
+            .ref('sellers')
+            .child(uid)
+            .child('products')
+            .child(pushId)
             .set(addProductObject)
             .whenComplete(() {
           const snackBar = SnackBar(
@@ -386,7 +387,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                             ProductManageWidget.product_manage_status == "add"
                                 ? "Add"
                                 : "Edit",
-                            style:const  TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           )),
                     ),
                   ],

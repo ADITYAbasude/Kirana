@@ -213,7 +213,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
             setState(() {
               _showProgressBar = false;
             });
-            MakeToast().showToast(e.message.toString());
+            showToast(e.message.toString());
           },
           codeSent: (String verificationId, int? resendToken) {
             setState(() {
@@ -226,7 +226,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
           },
           codeAutoRetrievalTimeout: (String verificationId) {});
     } else {
-      MakeToast().showToast("Enter the username and phone number to continue");
+      showToast("Enter the username and phone number to continue");
     }
   }
 }

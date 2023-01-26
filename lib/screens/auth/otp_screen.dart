@@ -7,6 +7,7 @@ copyright year 2022
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -23,7 +24,7 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
-  late CollectionReference ref;
+  // late CollectionReference ref;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   String? _smsCode;
@@ -31,7 +32,6 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void initState() {
     super.initState();
-    ref = FirebaseFirestore.instance.collection("Users");
   }
 
   @override
@@ -110,7 +110,7 @@ class _OTPScreenState extends State<OTPScreen> {
 not, if not then it will stop the login process else it will continue the login process/execution
 */
   Future<void> _verifyPhoneNumber() async {
-    Map<String, String> userDate = {
+    Map<String, dynamic> userDate = {
       'name': LoginSignUpScreen.username,
       'phone_number': LoginSignUpScreen.phoneNumber
     };
@@ -121,10 +121,10 @@ not, if not then it will stop the login process else it will continue the login 
 
     await auth.signInWithCredential(credential).then((value) {
       String uid = value.user!.uid;
-      ref
-          .doc(uid)
-          .collection('UserData')
-          .doc('info')
+      FirebaseDatabase.instance
+          .ref('users')
+          .child(uid)
+          .child('info')
           .set(userDate)
           .whenComplete(() {
         Navigator.push(

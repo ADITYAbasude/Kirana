@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class MakeToast {
   void showToast(String msg) {
     Fluttertoast.showToast(
         msg: msg,
@@ -12,4 +11,3 @@ class MakeToast {
         textColor: const Color.fromARGB(255, 0, 0, 0),
         fontSize: 16.0);
   }
-}

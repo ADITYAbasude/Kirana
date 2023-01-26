@@ -22,7 +22,7 @@ final _userNameController = TextEditingController();
 final _phoneNumberController = TextEditingController();
 
 class gallery extends State<MyProfileScreen> {
-  Future<String> username = UserData.userName(uid);
+  Future<dynamic> username = UserData.userName(uid);
 
   @override
   void initState() {

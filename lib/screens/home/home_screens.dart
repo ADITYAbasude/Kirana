@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:grocery_app/constants/get_permissions.dart';
+import 'package:grocery_app/screens/home/search_screen.dart';
 import 'package:location/location.dart' as loc hide PermissionStatus;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static Position? currentLocation;
   static String address = "";
 
-  Future<String> username = UserData.userName(uid);
+  Future<dynamic> username = UserData.userName(uid);
   @override
   void initState() {
     super.initState();
@@ -102,7 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, _searchRouteTranslation());
+              },
               icon: Icon(
                 Icons.search_rounded,
                 color: Colors.white,
@@ -301,8 +304,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       if (await location.serviceEnabled()) {
         currentLocation = await locateUser();
-        await placemarkFromCoordinates(
-                currentLocation!.latitude, currentLocation!.longitude)
+        placemarkFromCoordinates(
+                currentLocation!.latitude, currentLocation!.longitude,
+                localeIdentifier: 'en')
             .then(
           (List<Placemark> placeMarks) {
             Placemark place = placeMarks[0];
@@ -314,6 +318,25 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     }
+  }
+
+  Route _searchRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const SearchScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
   }
 
   @override

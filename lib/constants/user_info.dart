@@ -1,16 +1,21 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 var uid = FirebaseAuth.instance.currentUser!.uid;
 
 class UserData {
-  static Future<String> userName(String uid) async {
-    var a = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('UserData')
-        .doc('info')
-        .get();
-    return a.get('name').toString();
+  static Future<dynamic> userName(String uid) async {
+    var a = await FirebaseDatabase.instance
+        .ref('users')
+        .child(uid)
+        .child('info')
+        .once();
+
+    var data = a.snapshot.value as Map;
+
+    return data['name'];
   }
 }
