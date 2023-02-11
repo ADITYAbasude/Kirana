@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/constants/ConstantValue.dart';
 import 'package:grocery_app/constants/SystemColors.dart';
+import 'package:grocery_app/screens/orders/orders_screen.dart';
 import 'package:grocery_app/screens/profile/my_address_screen.dart';
 import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
 import 'package:grocery_app/screens/profile/my_profile_screen.dart';
 import 'package:grocery_app/screens/profile/notification_screen.dart';
-import 'package:grocery_app/tools/Toast.dart';
+import 'package:grocery_app/screens/seller/seller_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../animations/screen_route_animation.dart';
 import '../../constants/user_info.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,26 +22,29 @@ class ProfileScreen extends StatefulWidget {
 // data
 final nameList = [
   "My Profile",
-  "My Favorites",
+  "Switch Seller",
   "My Address",
+  "My Orders",
   "Notification",
   "Help Center",
   "Log Out"
 ];
 final icons = [
   Icons.account_circle_outlined,
-  Icons.favorite_border_rounded,
+  Icons.storefront_outlined,
   Icons.map_outlined,
+  Icons.shopping_bag_outlined,
   Icons.notifications_outlined,
   Icons.help_center_outlined,
   Icons.logout_outlined
 ];
 final differentColors = [
   Colors.green,
-  Colors.black,
-  Colors.cyan,
-  Colors.yellow,
   Colors.deepPurple,
+  Colors.cyan,
+  Colors.black,
+  Colors.yellow,
+  Colors.amber,
   Colors.red
 ];
 
@@ -149,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           break;
                         case 1:
                           Navigator.of(context)
-                              .push(_myFavoritesRouteTranslation());
+                              .push(_sellerStoreRouteTranslation());
                           break;
                         case 2:
                           Navigator.of(context)
@@ -157,15 +160,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           break;
                         case 3:
                           Navigator.of(context)
-                              .push(_myNotificationRouteTranslation());
+                              .push(_myOrderRouteTranslation());
                           break;
                         case 4:
                           Navigator.of(context)
-                              .push(_myAddressRouteTranslation());
+                              .push(_myNotificationRouteTranslation());
                           break;
                         case 5:
-                          logOut(context);
+                          Navigator.of(context)
+                              .push(_myProfileRouteTranslation());
                           break;
+                        case 6:
+                          logOut(context);
                       }
                     },
                     child: Container(
@@ -219,6 +225,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const MyProfileScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
+  }
+
+  Route _sellerStoreRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SellerScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
+  }
+
+  Route _myOrderRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => OrderScreen(),
         transitionsBuilder: ((context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset(0.0, 0.0);

@@ -15,7 +15,8 @@ import 'package:uuid/uuid.dart';
 import '../../screens/seller/seller_product_detailed_screen.dart';
 
 class ProductManageWidget extends StatefulWidget {
-  const ProductManageWidget({Key? key}) : super(key: key);
+  ProductManageWidget(this.controller);
+  final controller;
   static String product_manage_status = '';
   static bool product_img_editing = false;
   @override
@@ -113,8 +114,10 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           'product_unit': unitsCriteriaData,
           'product_id': pushId,
           'seller_id': uid,
-          'rating': '',
-          'rated_by': ''
+          'rating': ProductManageWidget.product_img_editing == true
+              ? SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+                  ['rating']
+              : 0,
         };
 
         FirebaseDatabase.instance
@@ -166,6 +169,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
         body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5),
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
@@ -179,6 +183,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
             child: Stack(
               children: [
                 ListView(
+                  controller: widget.controller,
                   physics: ClampingScrollPhysics(),
                   children: [
                     Container(
@@ -273,8 +278,8 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
 
                     //divider
                     Container(
-                      margin:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
                       child: const Divider(
                         color: Colors.black45,
                       ),
@@ -316,7 +321,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                             // unit of product
                             Container(
                               margin: const EdgeInsets.only(left: 10),
-                              width: ScreenWidth / 2,
+                              width: (ScreenWidth / 2) - 10,
                               child: DropdownButtonFormField(
                                   decoration: const InputDecoration(
                                       border: OutlineInputBorder(),

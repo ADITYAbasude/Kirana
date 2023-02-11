@@ -5,12 +5,11 @@ This file is created by Aditya
 copyright year 2022
 */
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/screens/seller/seller_product_detailed_screen.dart';
-import 'package:grocery_app/tools/Toast.dart';
 import 'package:grocery_app/widget/seller_screen_widget/product_manage_widget.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -26,7 +25,7 @@ class SellerHomeScreen extends StatefulWidget {
 // bool _productPriceError = false;
 
 // uid of user
-final uid = FirebaseAuth.instance.currentUser!.uid;
+final _uid = FirebaseAuth.instance.currentUser!.uid;
 
 class _SellerHomeScreen extends State<SellerHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -61,6 +60,15 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                   color: Colors.white,
                 ))
           ],
+          leading: IconButton(
+              onPressed: (() {
+                Navigator.pop(context,
+                    MaterialPageRoute(builder: (context) => MainScreen()));
+              }),
+              icon: const Icon(
+                Icons.arrow_back_ios_rounded,
+                color: Colors.white,
+              )),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         body: RefreshIndicator(
@@ -164,7 +172,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                             onPressed: () {
                               FirebaseDatabase.instance
                                   .ref(
-                                      'sellers/$uid/products/${SellerHomeScreen.products[index]['product_id']}')
+                                      'sellers/$_uid/products/${SellerHomeScreen.products[index]['product_id']}')
                                   .remove()
                                   .whenComplete(() {
                                 _getProducts();
@@ -201,7 +209,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                     builder: (_, controller) {
                       return StatefulBuilder(
                         builder: (BuildContext context, setState) {
-                          return ProductManageWidget();
+                          return ProductManageWidget(controller);
                         },
                       );
                     },
@@ -221,7 +229,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
     SellerHomeScreen.products.clear();
     FirebaseDatabase.instance
         .ref('sellers')
-        .child(uid)
+        .child(_uid)
         .child('products')
         .get()
         .then((value) {

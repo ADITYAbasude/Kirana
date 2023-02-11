@@ -82,15 +82,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           const BorderSide(color: Colors.white, width: 2)),
                 ),
               )),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
         ),
       ),
     );

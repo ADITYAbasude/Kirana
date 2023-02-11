@@ -1,10 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
-
+import 'package:grocery_app/constants/user_info.dart';
 import '../../widget/seller_screen_widget/product_manage_widget.dart';
 
 class SellerProductDetailedScreen extends StatefulWidget {
@@ -142,7 +141,7 @@ class _SellerProductDetailedScreenState
                       builder: (_, controller) {
                         return StatefulBuilder(
                           builder: (BuildContext context, setState) {
-                            return ProductManageWidget();
+                            return ProductManageWidget(controller);
                           },
                         );
                       },

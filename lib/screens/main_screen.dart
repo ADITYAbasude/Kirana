@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/orders/orders_screen.dart';
+import 'package:grocery_app/screens/home/search_screen.dart';
+import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
 import 'package:grocery_app/screens/profile/profile_screen.dart';
-import 'package:grocery_app/screens/seller/seller_home_screen.dart';
-import 'package:grocery_app/screens/seller/seller_screen.dart';
 import 'package:grocery_app/screens/home/home_screens.dart';
-import 'package:grocery_app/tools/Toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
@@ -21,8 +18,8 @@ String exist = "";
 class _MainScreenState extends State<MainScreen> {
   final screens = [
     HomeScreen(),
-    OrderScreen(),
-    SellerScreen(),
+    SearchScreen(),
+    MyFavoritesScreen(),
     ProfileScreen()
   ];
 
@@ -34,9 +31,7 @@ class _MainScreenState extends State<MainScreen> {
       //   backgroundColor: Theme.of(context).primaryColor,
       //   elevation: 2,
       // ),
-      body: MainScreen.itemIndex == 2 && exist == "seller"
-          ? SellerHomeScreen()
-          : screens[MainScreen.itemIndex],
+      body: screens[MainScreen.itemIndex],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: ((value) {
@@ -59,19 +54,19 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
                 icon: Icon(
                   MainScreen.itemIndex == 1
-                      ? Icons.shopping_bag_rounded
-                      : Icons.shopping_bag_outlined,
+                      ? Icons.search_rounded
+                      : Icons.search_rounded,
                   size: iconSize,
                 ),
-                label: "Orders"),
+                label: "Search"),
             BottomNavigationBarItem(
                 icon: Icon(
                   MainScreen.itemIndex == 2
-                      ? Icons.storefront_rounded
-                      : Icons.storefront_outlined,
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
                   size: iconSize,
                 ),
-                label: "Seller"),
+                label: "Favorites"),
             BottomNavigationBarItem(
                 icon: Icon(
                   MainScreen.itemIndex == 3

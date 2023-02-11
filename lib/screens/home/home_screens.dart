@@ -2,19 +2,22 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_const_constructors, deprecated_member_use, avoid_print, duplicate_ignore
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:grocery_app/constants/distanceCalculator.dart';
 import 'package:grocery_app/constants/get_permissions.dart';
 import 'package:grocery_app/screens/home/search_screen.dart';
+import 'package:grocery_app/widget/product_card_widget.dart';
+import 'package:grocery_app/widget/store_card_widget.dart';
 import 'package:location/location.dart' as loc hide PermissionStatus;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:grocery_app/constants/user_info.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
-
+  static List nearestStoreList = [];
+  static List products = [];
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -41,8 +44,10 @@ final categoriesIcons = [
 
 loc.Location location = loc.Location();
 
+// firebase database ref
+DatabaseReference _dbRef = FirebaseDatabase.instance.ref('sellers');
+
 class _HomeScreenState extends State<HomeScreen> {
-  static LatLng? latlng;
   static Position? currentLocation;
   static String address = "";
 
@@ -53,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(Duration.zero, () {
       // location access
       LocationAccess();
+    }).whenComplete(() {
+      _getNearestStore();
     });
   }
 
@@ -101,19 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, _searchRouteTranslation());
-              },
-              icon: Icon(
-                Icons.search_rounded,
-                color: Colors.white,
-              ))
-        ],
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: ListView(
+        physics: ClampingScrollPhysics(),
         children: [
           Container(
             margin: EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 30),
@@ -135,141 +133,76 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Container(
               height: 110,
-              child: ScrollConfiguration(
-                  behavior: ScrollBehavior(
-                      androidOverscrollIndicator:
-                          AndroidOverscrollIndicator.glow),
-                  child: ListView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 4,
-                      itemBuilder: (context, index) {
-                        return Column(children: [
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            width: 70,
-                            height: 70,
-                            decoration: BoxDecoration(
-                                color: categoriesColors[index],
-                                borderRadius: BorderRadius.circular(50)),
-                            child: Image.asset(categoriesIcons[index]),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 0),
-                            child: Text(
-                              categoriesName[index],
-                              style: TextStyle(
-                                  fontSize: 10, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]);
-                      }))),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-            child: Text(
-              "Popular Deals",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Container(
-            height: 250,
-            child: ListView(
-              physics: AlwaysScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              children: [
-                AnimatedContainer(
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    width: MediaQuery.of(context).size.width / 2.2,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: const [
-                          BoxShadow(
-                              blurRadius: 10,
-                              spreadRadius: 0,
-                              color: Color.fromARGB(78, 0, 0, 0),
-                              offset: Offset(0, 0))
-                        ]),
-                    // padding: EdgeInsets.symmetric(horizontal: 5),
-                    duration: Duration(seconds: 1),
-                    child: Scaffold(
-                      backgroundColor: Colors.transparent,
-                      body: InkWell(
-                        onTap: () {},
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 3),
-                              decoration: BoxDecoration(
-                                // color: Color.fromARGB(48, 238, 238, 238),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  "assets/images/potato.jpg",
-                                  fit: BoxFit.cover,
-                                  width: 150,
-                                  height: 120,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 10, left: 5),
-                              child: Text(
-                                "Potato",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: 8,
-                                    left: 5,
-                                  ),
-                                  child: Text(
-                                    "200gr",
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[800]),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 0),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.currency_rupee_rounded),
-                                      Container(
-                                        child: Text("50",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600)),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
+              child: ListView.builder(
+                  physics: ClampingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return Column(children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                            color: categoriesColors[index],
+                            borderRadius: BorderRadius.circular(50)),
+                        child: Image.asset(categoriesIcons[index]),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 0),
+                        child: Text(
+                          categoriesName[index],
+                          style: TextStyle(
+                              fontSize: 10, fontWeight: FontWeight.w500),
                         ),
-                      ),
-                      floatingActionButton: FloatingActionButton.small(
-                        heroTag: "btn1",
-                        onPressed: () {},
-                        child: Icon(Icons.add_rounded),
-                      ),
-                      floatingActionButtonLocation:
-                          FloatingActionButtonLocation.miniEndFloat,
-                    )),
-              ],
-            ),
-          )
+                      )
+                    ]);
+                  })),
+          HomeScreen.nearestStoreList.isNotEmpty
+              ? Container(
+                  margin: EdgeInsets.only(top: 20, left: 20),
+                  child: Text(
+                    "Nearest Store",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                )
+              : Text(""),
+          HomeScreen.nearestStoreList.isNotEmpty
+              ? Container(
+                  height: 200,
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: HomeScreen.nearestStoreList.length,
+                    itemBuilder: (context, index) {
+                      return StoreCardWidget(
+                          HomeScreen.nearestStoreList[index]);
+                    },
+                  ),
+                )
+              : Text(''),
+          HomeScreen.products.isNotEmpty
+              ? Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Text(
+                    "Popular Deals",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                )
+              : Text(''),
+          HomeScreen.products.isNotEmpty
+              ? Container(
+                  height: 250,
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: HomeScreen.products.length,
+                    itemBuilder: (context, index) {
+                      return ProductCardWidget(HomeScreen.products[index]);
+                    },
+                  ),
+                )
+              : Text(''),
         ],
       ),
     );
@@ -277,7 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   LocationAccess() async {
     locationAccessStatus = await Permission.location.status;
-    // storageAccessStatus = await Permission.storage.status;
 
     if (locationAccessStatus == PermissionStatus.granted) {
       GetPermissions().RequestGpsService();
@@ -287,12 +219,6 @@ class _HomeScreenState extends State<HomeScreen> {
         GetPermissions().RequestGpsService();
       });
     }
-
-    // if (storageAccessStatus == PermissionStatus.granted) {
-    //   print("Granted");
-    // } else {
-    //   GetPermissions().StorageAccessRequest();
-    // }
   }
 
   Future<Position> locateUser() async {
@@ -304,13 +230,13 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       if (await location.serviceEnabled()) {
         currentLocation = await locateUser();
-        placemarkFromCoordinates(
+        await placemarkFromCoordinates(
                 currentLocation!.latitude, currentLocation!.longitude,
                 localeIdentifier: 'en')
             .then(
           (List<Placemark> placeMarks) {
             Placemark place = placeMarks[0];
-            setState(() {
+            super.setState(() {
               address =
                   '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}';
             });
@@ -339,8 +265,33 @@ class _HomeScreenState extends State<HomeScreen> {
         }));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _getNearestStore() async {
+    HomeScreen.nearestStoreList.clear();
+    HomeScreen.products.clear();
+    await _dbRef.get().then((value) async {
+      for (var snapshot in value.children) {
+        await snapshot.ref.child('info').get().then((value) async {
+          var data = value.value as Map;
+          Position location1 = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
+          double distance = getDistance(
+              location1, double.parse(data['lat']), double.parse(data['lng']));
+          if ((distance / 1000).round() < 4) {
+            setState(() {
+              HomeScreen.nearestStoreList.add(data);
+            });
+            await snapshot.ref.child('products').get().then((value) {
+              for (var snapshot in value.children) {
+                var product = snapshot.value as Map;
+                HomeScreen.products.add(product);
+              }
+            });
+          }
+        });
+      }
+    }).whenComplete(() async {
+      HomeScreen.nearestStoreList.shuffle();
+      HomeScreen.products.shuffle();
+    });
   }
 }

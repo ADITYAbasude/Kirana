@@ -1,4 +1,4 @@
-// ignore_for_file: sort_child_properties_last, use_build_context_synchronously, prefer_typing_uninitialized_variables, prefer_final_fields, deprecated_member_use
+// ignore_for_file: sort_child_properties_last, use_build_context_synchronously, prefer_typing_uninitialized_variables, prefer_final_fields, deprecated_member_use, import_of_legacy_library_into_null_safe
 
 /* 
 This file is created by Aditya
@@ -7,12 +7,14 @@ copyright year 2022
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:grocery_app/constants/SystemColors.dart';
+// import 'package:grocery_app/constants/geo_locator.dart';
 import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/tools/SnackBar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -49,7 +51,7 @@ FirebaseStorage? fStorage;
 var downloadUrl;
 
 //db ref
-DatabaseReference dbRef = FirebaseDatabase.instance.ref('sellers');
+DatabaseReference _dbRef = FirebaseDatabase.instance.ref('sellers');
 
 class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
   String _storeTypeValue = _storeTypeList.first;
@@ -137,12 +139,22 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                                       Visibility(
                                           visible: _showCamera,
                                           child: Positioned(
-                                              bottom: 5,
-                                              right: 5,
-                                              child: Icon(
-                                                Icons.camera_alt,
-                                                color: Colors.black
-                                                    .withOpacity(0.8),
+                                              bottom: 0,
+                                              right: 0,
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                decoration: BoxDecoration(
+                                                    color: mainColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50)),
+                                                child: Icon(
+                                                  Icons.camera_alt_outlined,
+                                                  color: Color.fromARGB(
+                                                          255, 255, 255, 255)
+                                                      .withOpacity(0.8),
+                                                ),
                                               )))
                                     ],
                                   )),
@@ -291,14 +303,12 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                                       _check = !_check;
                                     });
                                   })),
-                              InkWell(
+                              GestureDetector(
                                   onTap: () {
                                     setState(() {
                                       _check = !_check;
                                     });
                                   },
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
                                   child: const Text(
                                       "Above the given data is right")),
                             ],
@@ -406,6 +416,10 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
       final uid = FirebaseAuth.instance.currentUser!.uid;
       fStorage = FirebaseStorage.instance;
 
+      // convert address in latlng
+      var coordinate = await Geocoder.local
+          .findAddressesFromQuery(_shopAddressController.text);
+
       // it's a database reference
       Reference ref =
           fStorage!.ref().child("images").child(uid).child("seller_image");
@@ -420,16 +434,18 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
       var username = userNameData.value as Map;
 
       Map<String, String> dataObject = {
-        'seller_image': downloadUrl.toString(),
+        'shop_image': downloadUrl.toString(),
         'shop_name': shopNameData.toString(),
         'shop_address': shopAddressData.toString(),
         'shop_contact_number': shopContactNumberData.toString(),
         'shop_criteria': shopCriteriaData.toString(),
         'seller_id': uid,
-        "seller_name": username['name']
+        "seller_name": username['name'],
+        'lat': coordinate[0].coordinates.latitude.toString(),
+        'lng': coordinate[0].coordinates.longitude.toString()
       };
 
-      dbRef.child('$uid/info').set(dataObject).whenComplete(() async {
+      _dbRef.child('$uid/info').set(dataObject).whenComplete(() async {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('seller', "seller");
         setState(() {
