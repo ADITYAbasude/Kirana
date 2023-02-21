@@ -10,7 +10,7 @@ import 'package:grocery_app/screens/profile/notification_screen.dart';
 import 'package:grocery_app/screens/seller/seller_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constants/user_info.dart';
+import '../../constants/get_info.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);

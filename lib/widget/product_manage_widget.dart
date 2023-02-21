@@ -12,7 +12,7 @@ import 'package:grocery_app/tools/Toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../screens/seller/seller_product_detailed_screen.dart';
+import '../screens/seller/seller_product_detailed_screen.dart';
 
 class ProductManageWidget extends StatefulWidget {
   ProductManageWidget(this.controller);
@@ -103,7 +103,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           });
         }
 
-        Map<String, String> addProductObject = {
+        Map<String, dynamic> addProductObject = {
           'product_image': ProductManageWidget.product_img_editing == true
               ? downloadUrl.toString()
               : _image,
@@ -114,7 +114,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           'product_unit': unitsCriteriaData,
           'product_id': pushId,
           'seller_id': uid,
-          'rating': ProductManageWidget.product_img_editing == true
+          'rating': ProductManageWidget.product_manage_status == "edit"
               ? SellerHomeScreen.products[SellerProductDetailedScreen.index!]
                   ['rating']
               : 0,
@@ -125,6 +125,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
             .child(uid)
             .child('products')
             .child(pushId)
+            .child('info')
             .set(addProductObject)
             .whenComplete(() {
           const snackBar = SnackBar(

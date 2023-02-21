@@ -3,8 +3,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
-import 'package:grocery_app/constants/user_info.dart';
-import '../../widget/seller_screen_widget/product_manage_widget.dart';
+import 'package:grocery_app/constants/get_info.dart';
+import '../../widget/product_manage_widget.dart';
 
 class SellerProductDetailedScreen extends StatefulWidget {
   // final Function callBackFunction;
@@ -52,14 +52,14 @@ class _SellerProductDetailedScreenState
         Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
+                // borderRadius: BorderRadius.circular(50),
                 child: Image.network(
-                  SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-                      ['product_image'],
-                  width: 300,
-                  height: 250,
-                  fit: BoxFit.cover,
-                ))),
+              SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+                  ['product_image'],
+              // width: 300,
+              // height: 250,
+              fit: BoxFit.cover,
+            ))),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
           child: Column(
@@ -72,6 +72,7 @@ class _SellerProductDetailedScreenState
                   // product name text widget
                   SellerHomeScreen.products[SellerProductDetailedScreen.index!]
                       ['product_name'],
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
@@ -110,13 +111,14 @@ class _SellerProductDetailedScreenState
                 color: Colors.black26,
               ),
               //product analysis
-              Container(
-                margin: const EdgeInsets.only(top: 25),
-                child: const Text(
-                  "Product analysis",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-                ),
-              )
+              ////TODO: for future use
+              // Container(
+              //   margin: const EdgeInsets.only(top: 25),
+              //   child: const Text(
+              //     "Product analysis",
+              //     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+              //   ),
+              // )
             ],
           ),
         ),

@@ -10,7 +10,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/screens/seller/seller_product_detailed_screen.dart';
-import 'package:grocery_app/widget/seller_screen_widget/product_manage_widget.dart';
+import 'package:grocery_app/widget/product_manage_widget.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({Key? key}) : super(key: key);
@@ -143,6 +143,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                           child: Text(
                                             SellerHomeScreen.products[index]
                                                 ['product_name'],
+                                            overflow: TextOverflow.ellipsis,
                                             style: TextStyle(fontSize: 18),
                                           )),
                                       Container(
@@ -227,15 +228,17 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
 
   void _getProducts() async {
     SellerHomeScreen.products.clear();
-    FirebaseDatabase.instance
+    await FirebaseDatabase.instance
         .ref('sellers')
         .child(_uid)
         .child('products')
         .get()
-        .then((value) {
+        .then((value) async {
       for (var value in value.children) {
-        setState(() {
-          SellerHomeScreen.products.add(value.value);
+        await value.ref.child('info').get().then((value) {
+          setState(() {
+            SellerHomeScreen.products.add(value.value);
+          });
         });
       }
     });

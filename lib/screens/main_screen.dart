@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grocery_app/screens/cart/cart_screen.dart';
 import 'package:grocery_app/screens/home/search_screen.dart';
 import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
 import 'package:grocery_app/screens/profile/profile_screen.dart';
@@ -18,7 +19,7 @@ String exist = "";
 class _MainScreenState extends State<MainScreen> {
   final screens = [
     HomeScreen(),
-    SearchScreen(),
+    CartScreen(),
     MyFavoritesScreen(),
     ProfileScreen()
   ];
@@ -27,10 +28,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     _checkSeller();
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   elevation: 2,
-      // ),
       body: screens[MainScreen.itemIndex],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -54,11 +51,11 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
                 icon: Icon(
                   MainScreen.itemIndex == 1
-                      ? Icons.search_rounded
-                      : Icons.search_rounded,
+                      ? Icons.shopping_cart_rounded
+                      : Icons.shopping_cart_outlined,
                   size: iconSize,
                 ),
-                label: "Search"),
+                label: "Cart"),
             BottomNavigationBarItem(
                 icon: Icon(
                   MainScreen.itemIndex == 2

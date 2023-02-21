@@ -32,10 +32,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           body: InkWell(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ProductDetailedScreen(widget.productData)));
+                  context, _productRouteTranslation(widget.productData));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,5 +101,24 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           // floatingActionButtonLocation:
           //     FloatingActionButtonLocation.miniEndFloat,
         ));
+  }
+
+  Route _productRouteTranslation(var productData) {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ProductDetailedScreen(productData),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
   }
 }

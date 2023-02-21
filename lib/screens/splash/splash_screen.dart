@@ -6,7 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/auth/login_signup_screen.dart';
+import 'package:grocery_app/screens/cart/cart_screen.dart';
 import 'package:grocery_app/screens/main_screen.dart';
+import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -39,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 }
 
               // Navigator.pushReplacement(context,
-              //     MaterialPageRoute(builder: (context) => LoginSignUpScreen()))
+              //     MaterialPageRoute(builder: (context) => CartScreen()))
             });
   }
 

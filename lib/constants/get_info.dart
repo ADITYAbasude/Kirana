@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -17,5 +16,18 @@ class UserData {
     var data = a.snapshot.value as Map;
 
     return data['name'];
+  }
+
+  static Future<dynamic> getSellerName(String sellerId) async {
+    var sellerName;
+    await FirebaseDatabase.instance
+        .ref('sellers/${sellerId}/info')
+        .get()
+        .then((value) {
+      var data = value.value as Map;
+      sellerName = data['shop_name'];
+    });
+
+    return sellerName;
   }
 }

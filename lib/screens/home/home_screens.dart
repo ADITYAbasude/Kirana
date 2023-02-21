@@ -7,13 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:grocery_app/constants/distanceCalculator.dart';
 import 'package:grocery_app/constants/get_permissions.dart';
+import 'package:grocery_app/screens/home/product_detailed_screen.dart';
 import 'package:grocery_app/screens/home/search_screen.dart';
 import 'package:grocery_app/widget/product_card_widget.dart';
 import 'package:grocery_app/widget/store_card_widget.dart';
 import 'package:location/location.dart' as loc hide PermissionStatus;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:grocery_app/constants/user_info.dart';
+import 'package:grocery_app/constants/get_info.dart';
 
 class HomeScreen extends StatefulWidget {
   static List nearestStoreList = [];
@@ -108,6 +109,16 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context, _searchRouteTranslation());
+              },
+              icon: Icon(
+                Icons.search_rounded,
+                color: Colors.white,
+              ))
+        ],
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: ListView(
@@ -212,11 +223,12 @@ class _HomeScreenState extends State<HomeScreen> {
     locationAccessStatus = await Permission.location.status;
 
     if (locationAccessStatus == PermissionStatus.granted) {
-      GetPermissions().RequestGpsService();
-      _getCurrentAddress();
+      await GetPermissions().RequestGpsService().then((value) {
+        _getCurrentAddress();
+      });
     } else {
-      GetPermissions().LocationAccessRequest().then((value) {
-        GetPermissions().RequestGpsService();
+      await GetPermissions().LocationAccessRequest().then((value) async {
+        await GetPermissions().RequestGpsService();
       });
     }
   }
@@ -236,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .then(
           (List<Placemark> placeMarks) {
             Placemark place = placeMarks[0];
-            super.setState(() {
+            setState(() {
               address =
                   '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}';
             });
@@ -274,22 +286,27 @@ class _HomeScreenState extends State<HomeScreen> {
           var data = value.value as Map;
           Position location1 = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.high);
+          // print(data);
           double distance = getDistance(
               location1, double.parse(data['lat']), double.parse(data['lng']));
           if ((distance / 1000).round() < 4) {
             setState(() {
               HomeScreen.nearestStoreList.add(data);
             });
-            await snapshot.ref.child('products').get().then((value) {
+            await snapshot.ref.child('products').get().then((value) async {
               for (var snapshot in value.children) {
-                var product = snapshot.value as Map;
-                HomeScreen.products.add(product);
+                await snapshot.ref.child('info').get().then((value) {
+                  var product = value.value as Map;
+                  setState(() {
+                    HomeScreen.products.add(product);
+                  });
+                });
               }
             });
           }
         });
       }
-    }).whenComplete(() async {
+    }).whenComplete(() {
       HomeScreen.nearestStoreList.shuffle();
       HomeScreen.products.shuffle();
     });
