@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
+import 'package:grocery_app/tools/SnackBar.dart';
 import 'package:grocery_app/tools/Toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -25,6 +26,7 @@ class ProductManageWidget extends StatefulWidget {
 
 // ignore: prefer_typing_uninitialized_variables
 var downloadUrl;
+String _productCriteria = "Vegetable";
 
 // textfield controllers
 final _productNameController = TextEditingController();
@@ -35,6 +37,13 @@ final _productDescriptionController = TextEditingController();
 // lists
 List<String> units = ["/ 500 g", "/ 1 pc"];
 
+const List<String> _productTypeList = <String>[
+  'Vegetable',
+  'Fruit',
+  'General',
+  'Meal'
+];
+
 // default data variables
 String unitsCriteriaData = "/ 500 g";
 
@@ -43,6 +52,8 @@ bool _loading = false;
 
 class _ProductManageWidgetState extends State<ProductManageWidget> {
   var _image;
+
+  String _storeTypeValue = _productTypeList.first;
 
   @override
   void initState() {
@@ -65,8 +76,12 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
 
       _image = SellerHomeScreen.products[SellerProductDetailedScreen.index!]
           ['product_image'];
+
+      setState(() {
+        _productCriteria = SellerHomeScreen
+            .products[SellerProductDetailedScreen.index!]['product_criteria'];
+      });
     }
-    // _getProducts();
   }
 
   @override
@@ -111,6 +126,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           'product_description': _productDescriptionController.text,
           'product_stock': _productStockController.text,
           'product_price': _productPriceController.text,
+          'product_criteria': _productCriteria,
           'product_unit': unitsCriteriaData,
           'product_id': pushId,
           'seller_id': uid,
@@ -128,10 +144,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
             .child('info')
             .set(addProductObject)
             .whenComplete(() {
-          const snackBar = SnackBar(
-            content: Text("Product successfully added"),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          showSnackBar(context, "Product successfully added");
           setState(() {
             _loading = false;
             _image = null;
@@ -140,17 +153,13 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           _productPriceController.text = "";
           _productDescriptionController.text = "";
           _productStockController.text = "0";
-          //  _getProducts();
         });
       } else {
         setState(() {
           _loading = false;
         });
-        final snackBar = SnackBar(
-          content: const Text("Add a proper data"),
-          backgroundColor: Colors.redAccent[500],
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        showSnackBar(context, "Add a proper data",
+            color: const Color.fromRGBO(255, 82, 82, 1));
       }
     }
 
@@ -200,10 +209,6 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                                       .pickImage(source: ImageSource.gallery)
                                       .then((value) {
                                     if (value != null) {
-                                      // &&
-                                      //     ProductManageWidget
-                                      //             .product_manage_status ==
-                                      //         "edit") {
                                       ProductManageWidget.product_img_editing =
                                           true;
                                       setState(() {
@@ -211,10 +216,6 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                                       });
                                     }
                                   });
-
-                                  // if (image == null) return null;
-
-                                  // final tempImage = File(image.path);
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
@@ -299,12 +300,32 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                           )),
                     ),
                     Container(
+                      margin:
+                          const EdgeInsets.only(top: 20, left: 30, right: 30),
+                      width: double.infinity,
+                      child: DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              label: Text("Product criteria")),
+                          value: _productCriteria,
+                          onChanged: (value) {
+                            _productCriteria = value.toString();
+                          },
+                          items: _productTypeList
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList()),
+                    ),
+                    Container(
                         width: MediaQuery.of(context).size.width,
                         margin:
                             const EdgeInsets.only(top: 20, left: 30, right: 30),
                         child: Row(
                           children: [
-                            // price od product
+                            // price of product
                             SizedBox(
                               width: ScreenWidth / 2,
                               child: TextField(

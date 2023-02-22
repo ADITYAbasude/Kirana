@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/constants/ConstantValue.dart';
@@ -8,6 +10,7 @@ import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
 import 'package:grocery_app/screens/profile/my_profile_screen.dart';
 import 'package:grocery_app/screens/profile/notification_screen.dart';
 import 'package:grocery_app/screens/seller/seller_screen.dart';
+import 'package:grocery_app/screens/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/get_info.dart';
@@ -213,11 +216,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ));
   }
 
-  void logOut(BuildContext context) {
-    FirebaseAuth.instance.signOut().whenComplete(() async {
+  void logOut(BuildContext context) async{
+    await FirebaseAuth.instance.signOut().whenComplete(() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove("seller");
-      Navigator.popUntil(context, ModalRoute.withName('/'));
+      Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => SplashScreen()),
+          ModalRoute.withName('/'));
     });
   }
 

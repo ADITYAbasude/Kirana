@@ -44,7 +44,7 @@ bool _errorForShopContactNumber = false;
 String? shopNameData;
 String? shopAddressData;
 String? shopContactNumberData;
-String shopCriteriaData = "Vegetable";
+// String shopCriteriaData = "Vegetable";
 
 // storage ref
 FirebaseStorage? fStorage;
@@ -267,27 +267,27 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                             ),
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                              top: 20, left: 20, right: 20),
-                          width: double.infinity,
-                          child: DropdownButtonFormField(
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  label: Text("Shop criteria")),
-                              value: _storeTypeValue,
-                              onChanged: (value) {
-                                shopCriteriaData = value.toString();
-                              },
-                              items: _storeTypeList
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList()),
-                        ),
+                        // Container(
+                        //   margin: const EdgeInsets.only(
+                        //       top: 20, left: 20, right: 20),
+                        //   width: double.infinity,
+                        //   child: DropdownButtonFormField(
+                        //       decoration: const InputDecoration(
+                        //           border: OutlineInputBorder(),
+                        //           label: Text("Shop criteria")),
+                        //       value: _storeTypeValue,
+                        //       onChanged: (value) {
+                        //         shopCriteriaData = value.toString();
+                        //       },
+                        //       items: _storeTypeList
+                        //           .map<DropdownMenuItem<String>>(
+                        //               (String value) {
+                        //         return DropdownMenuItem<String>(
+                        //           value: value,
+                        //           child: Text(value),
+                        //         );
+                        //       }).toList()),
+                        // ),
                         Container(
                           margin: const EdgeInsets.only(left: 10, top: 20),
                           child: Row(
@@ -438,7 +438,6 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
         'shop_name': shopNameData.toString(),
         'shop_address': shopAddressData.toString(),
         'shop_contact_number': shopContactNumberData.toString(),
-        'shop_criteria': shopCriteriaData.toString(),
         'seller_id': uid,
         "seller_name": username['name'],
         'lat': coordinate[0].coordinates.latitude.toString(),
@@ -452,7 +451,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
           _showProgressBar = false;
         });
         Navigator.pop(context);
-        MainScreen.itemIndex = 2;
+        MainScreen.itemIndex = 3;
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MainScreen()));
       });
