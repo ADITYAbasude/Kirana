@@ -1,34 +1,31 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/constants/SystemColors.dart';
 import 'package:grocery_app/utils/get_info.dart';
-import 'package:grocery_app/tools/Toast.dart';
+import 'package:grocery_app/utils/add_cart_functions.dart';
 
 import '../constants/ConstantValue.dart';
 import '../screens/home/product_detailed_screen.dart';
 
-class CartWidget extends StatefulWidget {
-  final cart;
-  final Function cartListCallBack;
-  final int index;
-  final Function updateProductPriceCallback;
-  final Function updateCartListDataCallback;
-  const CartWidget(this.cart, this.cartListCallBack, this.index,
-      this.updateProductPriceCallback, this.updateCartListDataCallback);
+class FavoriteProductCartWidget extends StatefulWidget {
+  const FavoriteProductCartWidget(this.favoriteData,
+      this.removeProductFromFavoriteListCallback, this.index);
+  final favoriteData;
+  final Function removeProductFromFavoriteListCallback;
+  final index;
 
   @override
-  _CartWidgetState createState() => _CartWidgetState();
+  _FavoriteProductCartWidgetState createState() =>
+      _FavoriteProductCartWidgetState();
 }
 
-class _CartWidgetState extends State<CartWidget> {
+class _FavoriteProductCartWidgetState extends State<FavoriteProductCartWidget> {
   var productinfo;
   String unit = "";
-  int productQuantity = 1;
   @override
   void initState() {
     _getProductInfo();
     super.initState();
-    productQuantity = widget.cart['product_quantity'];
   }
 
   @override
@@ -70,11 +67,14 @@ class _CartWidgetState extends State<CartWidget> {
             ),
             Expanded(
               child: Container(
+                alignment: Alignment.topLeft,
                 margin: const EdgeInsets.only(left: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
@@ -90,18 +90,10 @@ class _CartWidgetState extends State<CartWidget> {
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
-                        IconButton(
-                            onPressed: () {
-                              _removeProductFromCart();
-                            },
-                            icon: const Icon(
-                              Icons.delete_outline,
-                              size: 20,
-                            ))
                       ],
                     ),
                     Container(
-                      margin: const EdgeInsets.only(bottom: 5),
+                      margin: const EdgeInsets.only(bottom: 5, top: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -126,62 +118,10 @@ class _CartWidgetState extends State<CartWidget> {
                         ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.grey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
-                            onPressed: productQuantity != 1
-                                ? () {
-                                    if (productQuantity > 1) {
-                                      setState(() {
-                                        productQuantity--;
-                                      });
-                                      _updateProductQuantity();
-                                    }
-                                  }
-                                : null,
-                            icon: const Icon(
-                              Icons.remove_rounded,
-                              size: 16,
-                            )),
-                        Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: const Border.fromBorderSide(BorderSide(
-                                    color: Color.fromRGBO(224, 224, 224, 1)))),
-                            child: Text(productQuantity.toString())),
-                        IconButton(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.grey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                productQuantity++;
-                              });
-                              _updateProductQuantity();
-                            },
-                            icon: const Icon(
-                              Icons.add_rounded,
-                              size: 16,
-                            ))
-                      ],
-                    )
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -191,14 +131,12 @@ class _CartWidgetState extends State<CartWidget> {
   void _getProductInfo() async {
     await FirebaseDatabase.instance
         .ref(
-            'sellers/${widget.cart['seller_id']}/products/${widget.cart['product_id']}/info')
+            'sellers/${widget.favoriteData['seller_id']}/products/${widget.favoriteData['product_id']}/info')
         .get()
         .then((value) {
       if (value.exists) {
         setState(() {
           productinfo = value.value as Map;
-          widget.updateProductPriceCallback(
-              double.parse(productinfo['product_price']), widget.index);
           if (productinfo['product_unit'] == '/ 1 pc') {
             unit = '1 pc';
           } else {
@@ -209,20 +147,12 @@ class _CartWidgetState extends State<CartWidget> {
     });
   }
 
-  void _updateProductQuantity() async {
+  void _removeProductFromFavoriteList() async {
     await FirebaseDatabase.instance
-        .ref('users/${uid}/cart/${widget.cart['product_id']}')
-        .update({'product_quantity': productQuantity}).then((value) {
-      widget.updateCartListDataCallback(productQuantity, widget.index);
-    });
-  }
-
-  void _removeProductFromCart() async {
-    await FirebaseDatabase.instance
-        .ref('users/${uid}/cart/${widget.cart['product_id']}')
+        .ref('users/${uid}/favorite/${widget.favoriteData['product_id']}')
         .remove()
         .then((value) {
-      widget.cartListCallBack(widget.index);
+      widget.removeProductFromFavoriteListCallback(widget.index);
     });
   }
 

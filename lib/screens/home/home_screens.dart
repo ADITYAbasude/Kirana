@@ -14,7 +14,9 @@ import 'package:grocery_app/widget/store_card_widget.dart';
 import 'package:location/location.dart' as loc hide PermissionStatus;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:grocery_app/constants/get_info.dart';
+import 'package:grocery_app/utils/get_info.dart';
+
+import '../../tools/loading.dart';
 
 class HomeScreen extends StatefulWidget {
   static List nearestStoreList = [];
@@ -27,6 +29,8 @@ String uid = FirebaseAuth.instance.currentUser!.uid;
 
 var locationAccessStatus;
 var storageAccessStatus;
+
+bool _showProgressBar = false;
 
 List<Color> categoriesColors = [
   Colors.green.shade50,
@@ -121,99 +125,118 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: ListView(
-        physics: ClampingScrollPhysics(),
+      body: Stack(
         children: [
-          Container(
-            margin: EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 30),
-            child: Column(
-              children: [
-                Row(
-                  // ignore: prefer_const_literals_to_create_immutables
+          ListView(
+            physics: ClampingScrollPhysics(),
+            children: [
+              Container(
+                margin:
+                    EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 30),
+                child: Column(
                   children: [
-                    const Text(
-                      "Categories",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const Text("")
-                  ],
-                )
-              ],
-            ),
-          ),
-          Container(
-              height: 110,
-              child: ListView.builder(
-                  physics: ClampingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    return Column(children: [
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                            color: categoriesColors[index],
-                            borderRadius: BorderRadius.circular(50)),
-                        child: Image.asset(categoriesIcons[index]),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 0),
-                        child: Text(
-                          categoriesName[index],
+                    Row(
+                      // ignore: prefer_const_literals_to_create_immutables
+                      children: [
+                        const Text(
+                          "Categories",
                           style: TextStyle(
-                              fontSize: 10, fontWeight: FontWeight.w500),
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                      )
-                    ]);
-                  })),
-          HomeScreen.nearestStoreList.isNotEmpty
-              ? Container(
-                  margin: EdgeInsets.only(top: 20, left: 20),
-                  child: Text(
-                    "Nearest Store",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                )
-              : Text(""),
-          HomeScreen.nearestStoreList.isNotEmpty
-              ? Container(
-                  height: 200,
+                        const Text("")
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                  height: 110,
                   child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: HomeScreen.nearestStoreList.length,
-                    itemBuilder: (context, index) {
-                      return StoreCardWidget(
-                          HomeScreen.nearestStoreList[index]);
-                    },
-                  ),
-                )
-              : Text(''),
-          HomeScreen.products.isNotEmpty
-              ? Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: Text(
-                    "Popular Deals",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                )
-              : Text(''),
-          HomeScreen.products.isNotEmpty
-              ? Container(
-                  height: 250,
-                  child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: HomeScreen.products.length,
-                    itemBuilder: (context, index) {
-                      return ProductCardWidget(HomeScreen.products[index]);
-                    },
-                  ),
-                )
-              : Text(''),
+                      physics: ClampingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        return Column(children: [
+                          Container(
+                            margin: EdgeInsets.all(10),
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                                color: categoriesColors[index],
+                                borderRadius: BorderRadius.circular(50)),
+                            child: Image.asset(categoriesIcons[index]),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 0),
+                            child: Text(
+                              categoriesName[index],
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        ]);
+                      })),
+              HomeScreen.nearestStoreList.isNotEmpty
+                  ? Container(
+                      margin: EdgeInsets.only(top: 20, left: 20),
+                      child: Text(
+                        "Nearest Store",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : Text(""),
+              HomeScreen.nearestStoreList.isNotEmpty
+                  ? Container(
+                      height: 200,
+                      child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: HomeScreen.nearestStoreList.length,
+                        itemBuilder: (context, index) {
+                          return StoreCardWidget(
+                              HomeScreen.nearestStoreList[index]);
+                        },
+                      ),
+                    )
+                  : Text(''),
+              HomeScreen.products.isNotEmpty
+                  ? Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      child: Text(
+                        "Popular Deals",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : Text(''),
+              HomeScreen.products.isNotEmpty
+                  ? Container(
+                      height: 250,
+                      child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: HomeScreen.products.length,
+                        itemBuilder: (context, index) {
+                          return ProductCardWidget(HomeScreen.products[index]);
+                        },
+                      ),
+                    )
+                  : Text(''),
+            ],
+          ),
+          Visibility(
+              visible: _showProgressBar,
+              child: Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    child: Loading(),
+                  )))
         ],
       ),
     );
@@ -278,6 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getNearestStore() async {
+    _showProgressBar = true;
     HomeScreen.nearestStoreList.clear();
     HomeScreen.products.clear();
     await _dbRef.get().then((value) async {
@@ -294,6 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeScreen.nearestStoreList.add(data);
             });
             await snapshot.ref.child('products').get().then((value) async {
+              _showProgressBar = false;
               for (var snapshot in value.children) {
                 await snapshot.ref.child('info').get().then((value) {
                   var product = value.value as Map;
@@ -309,6 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }).whenComplete(() {
       HomeScreen.nearestStoreList.shuffle();
       HomeScreen.products.shuffle();
+    }).onError((error, stackTrace) {
+      _showProgressBar = false;
     });
   }
 }

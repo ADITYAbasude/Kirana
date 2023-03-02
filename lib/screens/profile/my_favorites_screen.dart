@@ -1,93 +1,76 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/utils/get_info.dart';
+import 'package:grocery_app/widget/favorite_product_cart_widget.dart';
+import 'package:grocery_app/widget/wishlist_is_empty.dart';
 
+import '../../constants/ConstantValue.dart';
 import '../../constants/SystemColors.dart';
 
 class MyFavoritesScreen extends StatefulWidget {
   const MyFavoritesScreen({Key? key}) : super(key: key);
-
+  static List favoriteProductList = [];
   @override
   _MyFavoritesScreenState createState() => _MyFavoritesScreenState();
 }
 
 class _MyFavoritesScreenState extends State<MyFavoritesScreen> {
   @override
+  void initState() {
+    _getFavoriteProducts();
+    super.initState();
+  }
+
+  removeProductFromFavoriteListCallback(int index) {
+    setState(() {
+      MyFavoritesScreen.favoriteProductList.removeAt(index);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        automaticallyImplyLeading: false,
-        title: Text(
-          "My Favorites",
-          style: TextStyle(color: textColor),
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          automaticallyImplyLeading: false,
+          title: Text(
+            "My Favorites",
+            style: TextStyle(color: textColor),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-          child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Image.asset('image/my_fav.JPG'),
-            Text(
-              "Oops your wishlist is empty!",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
-                child: Text(
-                    "It seems nothing in here, Explore more and shortlist some item"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF24B329),
-                    minimumSize: Size(300, 50),
+        body: MyFavoritesScreen.favoriteProductList.isNotEmpty
+            ? SizedBox(
+                height: getScreenSize(context).height,
+                child:
+                    ListView(physics: const ClampingScrollPhysics(), children: [
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: MyFavoritesScreen.favoriteProductList.length,
+                    itemBuilder: (context, index) {
+                      return FavoriteProductCartWidget(
+                          MyFavoritesScreen.favoriteProductList[index],
+                          removeProductFromFavoriteListCallback,
+                          index);
+                    },
                   ),
-                  onPressed: () {},
-                  child: Text("Start Shopping")),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: Text(
-                    "Recommendation for you",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "See All",
-                      style: TextStyle(color: Color(0xFF24B329)),
-                    ))
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 15),
-                  color: Colors.grey[400],
-                  height: 180,
-                  width: 130,
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 15),
-                  color: Colors.grey[400],
-                  height: 180,
-                  width: 130,
-                )
-              ],
-            )
-          ],
-        ),
-      )),
-    );
+                ]))
+            : WishlistIsEmpty());
+  }
+
+  void _getFavoriteProducts() async {
+    MyFavoritesScreen.favoriteProductList.clear();
+    FirebaseDatabase.instance.ref('users/${uid}/favorite').get().then((value) {
+      if (value.exists) {
+        for (var product in value.children) {
+          if (product.exists) {
+            setState(() {
+              MyFavoritesScreen.favoriteProductList.add(product.value);
+            });
+          }
+        }
+      }
+    });
   }
 }

@@ -4,8 +4,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/constants/ConstantValue.dart';
 import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/constants/get_info.dart';
+import 'package:grocery_app/utils/get_info.dart';
 import 'package:grocery_app/widget/cart_widget.dart';
+
+import '../../tools/loading.dart';
 
 class CartScreen extends StatefulWidget {
   // list of carts
@@ -28,6 +30,8 @@ class _CartScreenState extends State<CartScreen> {
 
   // total price = subtotalPrice + shipping charge's
   double totalPrice = 0;
+
+  bool _showProgressBar = false;
 
   updateProductPriceCallback(double price, int index) {
     setState(() {
@@ -66,6 +70,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
+    _showProgressBar = true;
     _getProductsFromCart();
     super.initState();
   }
@@ -82,120 +87,137 @@ class _CartScreenState extends State<CartScreen> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        height: getScreenSize(context).height,
-        child: ListView(
-          physics: ClampingScrollPhysics(),
-          children: [
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: CartScreen.carts.length,
-              itemBuilder: (context, index) {
-                return CartWidget(
-                    CartScreen.carts[index],
-                    cartListCallback,
-                    index,
-                    updateProductPriceCallback,
-                    updateCartListDataCallback);
-              },
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 1, 20),
-                    width: getScreenSize(context).width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 7),
-                          width: double.infinity,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: Text(
-                                  'Subtotal',
-                                ),
+      body: Stack(
+        children: [
+          Container(
+            height: getScreenSize(context).height,
+            child: ListView(
+              physics: ClampingScrollPhysics(),
+              children: [
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: CartScreen.carts.length,
+                  itemBuilder: (context, index) {
+                    return CartWidget(
+                        CartScreen.carts[index],
+                        cartListCallback,
+                        index,
+                        updateProductPriceCallback,
+                        updateCartListDataCallback);
+                  },
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 1, 20),
+                        width: getScreenSize(context).width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 0, 0, 7),
+                              width: double.infinity,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      'Subtotal',
+                                    ),
+                                  ),
+                                  Text(
+                                    '₹ ${subTotalPrice}',
+                                  ),
+                                ],
                               ),
-                              Text(
-                                '₹ ${subTotalPrice}',
+                            ),
+                            Container(
+                              width: double.infinity,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      'Shipping charges',
+                                    ),
+                                  ),
+                                  Text(
+                                    '₹ ${shippingCharges}',
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 3, 9),
+                        child: Divider(),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 16),
+                        width: double.infinity,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Total',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              '₹ ${totalPrice}',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: mainColor,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.shopping_cart_checkout_rounded,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            'Checkout',
+                            style: TextStyle(color: textColor),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        Container(
-                          width: double.infinity,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: Text(
-                                  'Shipping charges',
-                                ),
-                              ),
-                              Text(
-                                '₹ ${shippingCharges}',
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 3, 9),
-                    child: Divider(),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 0, 16),
-                    width: double.infinity,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          '₹ ${totalPrice}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: mainColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.shopping_cart_checkout_rounded,
-                        color: Colors.white,
                       ),
-                      label: Text(
-                        'Checkout',
-                        style: TextStyle(color: textColor),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Visibility(
+              visible: _showProgressBar,
+              child: Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    child: Loading(),
+                  )))
+        ],
       ),
     );
   }
@@ -210,6 +232,9 @@ class _CartScreenState extends State<CartScreen> {
           });
         }
       }
+      _showProgressBar = false;
+    }).onError((error, stackTrace) {
+      _showProgressBar = false;
     });
   }
 }

@@ -111,7 +111,6 @@ class _SellerScreenState extends State<SellerScreen> {
   }
 
   _checkSellerIsExistOrNot() async {
-    showToast("working");
     _dbRef.get().then((value) {
       if (value.hasChild(_uid)) {
         SellerScreen.exist = "seller";

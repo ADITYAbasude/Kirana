@@ -19,7 +19,7 @@ class UserData {
   }
 
   static Future<dynamic> getSellerName(String sellerId) async {
-    var sellerName;
+    var sellerName = "";
     await FirebaseDatabase.instance
         .ref('sellers/${sellerId}/info')
         .get()

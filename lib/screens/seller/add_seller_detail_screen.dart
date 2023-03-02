@@ -17,6 +17,7 @@ import 'package:grocery_app/constants/SystemColors.dart';
 // import 'package:grocery_app/constants/geo_locator.dart';
 import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/tools/SnackBar.dart';
+import 'package:grocery_app/tools/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -348,7 +349,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
-                  child: const CircularProgressIndicator(),
+                  child: Loading(),
                 ))
           ],
         ));

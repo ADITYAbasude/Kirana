@@ -3,7 +3,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
-import 'package:grocery_app/constants/get_info.dart';
+import 'package:grocery_app/utils/get_info.dart';
 import '../../widget/product_manage_widget.dart';
 
 class SellerProductDetailedScreen extends StatefulWidget {

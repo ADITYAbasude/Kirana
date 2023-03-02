@@ -6,7 +6,7 @@ import 'package:grocery_app/constants/SystemColors.dart';
 import 'package:grocery_app/tools/Toast.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../constants/get_info.dart';
+import '../../utils/get_info.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});

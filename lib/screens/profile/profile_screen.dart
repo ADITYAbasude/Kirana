@@ -13,7 +13,7 @@ import 'package:grocery_app/screens/seller/seller_screen.dart';
 import 'package:grocery_app/screens/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constants/get_info.dart';
+import '../../utils/get_info.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);
@@ -216,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ));
   }
 
-  void logOut(BuildContext context) async{
+  void logOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut().whenComplete(() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove("seller");

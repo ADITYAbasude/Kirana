@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/seller/seller_home_screen.dart';
 import 'package:grocery_app/tools/SnackBar.dart';
 import 'package:grocery_app/tools/Toast.dart';
+import 'package:grocery_app/tools/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
@@ -427,7 +428,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
                       alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
+                      child: Loading(),
                     ))
               ],
             )));

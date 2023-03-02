@@ -6,10 +6,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:grocery_app/constants/ConstantValue.dart';
 import 'package:grocery_app/constants/SystemColors.dart';
 import 'package:grocery_app/tools/SnackBar.dart';
+import 'package:grocery_app/utils/add_cart_functions.dart';
 import 'package:grocery_app/widget/add_review_widget.dart';
 import 'package:grocery_app/widget/review_card_widget.dart';
 
-import '../../constants/get_info.dart';
+import '../../utils/get_info.dart';
 
 class ProductDetailedScreen extends StatefulWidget {
   ProductDetailedScreen(this.productData);
@@ -25,6 +26,9 @@ ScrollController? _controller;
 // check that, this product is already in user cart or not 🙄
 bool productInCart = false;
 
+// check that, this product is favorite product or not 🙄
+bool _isFavorite = false;
+
 class _ProductDetailedScreenState extends State<ProductDetailedScreen>
     with SingleTickerProviderStateMixin {
   //tab controller
@@ -37,8 +41,6 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
   double productStock = 0;
   // product unit
   String unit = '';
-
-  bool isFavorite = false;
   reviewCallBack(var review) {
     setState(() {
       ProductDetailedScreen.allReviews.add(review);
@@ -47,8 +49,15 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
     });
   }
 
+  productInCartCallback(bool b) {
+    setState(() {
+      productInCart = b;
+    });
+  }
+
   @override
   void initState() {
+    _checkFavoriteStatus(widget.productData);
     _getNumbersOfReviews(widget.productData);
     productStock = double.parse(widget.productData['product_stock']);
     unit = widget.productData['product_unit'] == '/ 1 pc' ? 'pc' : 'g';
@@ -119,11 +128,9 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  isFavorite = !isFavorite;
-                                });
+                                _addToFavorite(widget.productData);
                               },
-                              child: isFavorite
+                              child: _isFavorite
                                   ? Icon(
                                       Icons.favorite_rounded,
                                       color: mainColor,
@@ -266,7 +273,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                       ),
                     ),
                     onPressed: () {
-                      _addToCart(widget.productData);
+                      addToCart(
+                          widget.productData, context, productInCartCallback);
                     },
                     icon: const Icon(
                       Icons.add_shopping_cart_rounded,
@@ -298,50 +306,71 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
 // get number of users that given a reviews
   void _getNumbersOfReviews(var productData) async {
     ProductDetailedScreen.allReviews.clear();
+
     await FirebaseDatabase.instance
-        .ref('sellers/${uid}/products/${productData['product_id']}/reviews')
+        .ref(
+            'sellers/${productData['seller_id']}/products/${productData['product_id']}/reviews')
         .get()
         .then((value) {
-      for (var review in value.children) {
-        setState(() {
-          ProductDetailedScreen.allReviews.add(review.value);
-        });
-      }
-      if (ProductDetailedScreen.allReviews.isNotEmpty) {
-        setState(() {
-          ProductDetailedScreen.allReviews.reversed;
-          _rating = widget.productData['rating'] /
-              ProductDetailedScreen.allReviews.length;
-        });
+      if (value.exists) {
+        for (var review in value.children) {
+          setState(() {
+            ProductDetailedScreen.allReviews.add(review.value);
+          });
+        }
+        if (ProductDetailedScreen.allReviews.isNotEmpty) {
+          setState(() {
+            ProductDetailedScreen.allReviews.reversed;
+            _rating = widget.productData['rating'] /
+                ProductDetailedScreen.allReviews.length;
+            print(_rating);
+          });
+        }
       }
     });
   }
 
-  // add product in your cart
-  void _addToCart(var productData) async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref('users/${uid}/cart');
-    await ref.get().then((value) {
-      if (value.exists && value.hasChild(productData['product_id'])) {
-        setState(() {
-          productInCart = true;
-        });
-        showSnackBar(context, "Product already in our cart");
-      }
-    });
-
-    Map<String, dynamic> addCartModel = {
+// add product in your favorite product list
+  void _addToFavorite(var productData) async {
+    DatabaseReference ref =
+        FirebaseDatabase.instance.ref('users/${uid}/favorite');
+    Map<String, dynamic> addFavoriteModel = {
       'product_id': productData['product_id'],
       'product_quantity': 1,
       'seller_id': productData['seller_id']
     };
-    if (!productInCart) {
+    if (!_isFavorite) {
       await ref
           .child('${productData['product_id']}')
-          .set(addCartModel)
-          .whenComplete(() {
-        showSnackBar(context, "Product successfully added in you cart");
+          .set(addFavoriteModel)
+          .then((value) {
+        setState(() {
+          _isFavorite = true;
+        });
+        showSnackBar(
+            context, "This product is now added in your favorite list");
+      });
+    } else {
+      await ref.child('${productData['product_id']}').remove().then((value) {
+        setState(() {
+          _isFavorite = false;
+        });
+        showSnackBar(
+            context, "This product is now removed from your favorite list");
       });
     }
+  }
+
+  void _checkFavoriteStatus(var productData) async {
+    DatabaseReference ref =
+        FirebaseDatabase.instance.ref('users/${uid}/favorite');
+    await ref.get().then((value) {
+      if (value.exists && value.hasChild(productData['product_id'])) {
+        setState(() {
+          _isFavorite = true;
+        });
+      }
+    });
   }
 }
 
@@ -352,7 +381,8 @@ class ProductInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<dynamic> sellerName = UserData.getSellerName(uid);
+    Future<dynamic> sellerName =
+        UserData.getSellerName(productInfo['seller_id']);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
