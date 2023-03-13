@@ -245,9 +245,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                     controller: _tabController,
                     children: [
                       ProductInfoWidget(widget.productData),
-                      Expanded(
-                          child: ReviewTabViewWidget(
-                              widget.productData, reviewCallBack))
+                      ReviewTabViewWidget(widget.productData, reviewCallBack)
                     ],
                   ),
                 ),
@@ -387,16 +385,13 @@ class ProductInfoWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: [
-          GestureDetector(
-            onTap: () {},
-            child: Text(
-              productInfo['product_description'],
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-              textAlign: TextAlign.justify,
+          Text(
+            productInfo['product_description'],
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
             ),
+            textAlign: TextAlign.justify,
           ),
           Container(
             margin: const EdgeInsets.only(top: 25),

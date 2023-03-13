@@ -284,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Route _searchRouteTranslation() {
     return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const SearchScreen(),
+            SearchScreen(),
         transitionsBuilder: ((context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset(0.0, 0.0);

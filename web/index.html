@@ -33,6 +33,23 @@
   <title>grocery_app</title>
   <link rel="manifest" href="manifest.json">
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+  <!-- Firebase configuration -->
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyCcGiPXnDLTfS8csECxi1RON1joBAJsbWo",
+      authDomain: "grocery.firebaseapp.com",
+      databaseURL: "https://grocery.firebaseio.com",
+      projectId: "grocery-db521",
+      storageBucket: "grocery.appspot.com",
+      appId: "1:100847085960:web:46b1142c4c5780f9a2323d",
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
   <script>
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
@@ -56,6 +73,8 @@
       });
     });
   </script>
+
+  <script src="main.dart.js" type="application/javascript"></script>
 </body>
 
 </html>
