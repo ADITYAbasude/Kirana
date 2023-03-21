@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:geolocator/geolocator.dart';
 
 var uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -29,5 +30,10 @@ class UserData {
     });
 
     return sellerName;
+  }
+
+  static Future<Position> locateUser() async {
+    return Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 }

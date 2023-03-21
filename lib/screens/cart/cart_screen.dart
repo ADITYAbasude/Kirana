@@ -10,10 +10,6 @@ import 'package:grocery_app/widget/cart_widget.dart';
 import '../../tools/loading.dart';
 
 class CartScreen extends StatefulWidget {
-  // list of carts
-  static List carts = [];
-  static Map<int, double> productPrice = Map();
-
   @override
   _CartScreenState createState() => _CartScreenState();
 }
@@ -22,6 +18,9 @@ class CartScreen extends StatefulWidget {
 DatabaseReference dbRef = FirebaseDatabase.instance.ref('users/${uid}/cart');
 
 class _CartScreenState extends State<CartScreen> {
+  // list of carts
+  static List carts = [];
+  static Map<int, double> productPrice = {};
   // sub total Price
   double subTotalPrice = 0;
 
@@ -35,7 +34,7 @@ class _CartScreenState extends State<CartScreen> {
 
   updateProductPriceCallback(double price, int index) {
     setState(() {
-      CartScreen.productPrice[index] = price;
+      productPrice[index] = price;
       subTotalPrice += price;
     });
     calculateThePriceOfProduct(index);
@@ -43,24 +42,27 @@ class _CartScreenState extends State<CartScreen> {
 
   cartListCallback(int index) {
     setState(() {
-      CartScreen.carts.removeAt(index);
+      print(index);
+      carts.removeAt(index);
     });
     calculateThePriceOfProduct(index);
   }
 
   updateCartListDataCallback(int quantity, int index) {
     setState(() {
-      CartScreen.carts.elementAt(index)['product_quantity'] = quantity;
+      carts.elementAt(index)['product_quantity'] = quantity;
     });
     calculateThePriceOfProduct(index);
   }
 
   void calculateThePriceOfProduct(int index) {
     subTotalPrice = 0;
-    for (int i = 0; i < CartScreen.carts.length; i++) {
+    for (int i = 0; i < carts.length; i++) {
       setState(() {
-        subTotalPrice += CartScreen.carts.elementAt(index)['product_quantity'] *
-            CartScreen.productPrice[index];
+        subTotalPrice +=
+            carts.elementAt(index)['product_quantity'] * productPrice[index];
+        print(subTotalPrice);
+        print('product price: ${productPrice[index]}');
       });
     }
     setState(() {
@@ -97,14 +99,10 @@ class _CartScreenState extends State<CartScreen> {
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: CartScreen.carts.length,
+                  itemCount: carts.length,
                   itemBuilder: (context, index) {
-                    return CartWidget(
-                        CartScreen.carts[index],
-                        cartListCallback,
-                        index,
-                        updateProductPriceCallback,
-                        updateCartListDataCallback);
+                    return CartWidget(carts[index], cartListCallback, index,
+                        updateProductPriceCallback, updateCartListDataCallback);
                   },
                 ),
                 Container(
@@ -223,12 +221,12 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _getProductsFromCart() async {
-    CartScreen.carts.clear();
+    carts.clear();
     await dbRef.get().then((value) {
       if (value.exists) {
         for (var data in value.children) {
           setState(() {
-            CartScreen.carts.add(data.value);
+            carts.add(data.value);
           });
         }
       }

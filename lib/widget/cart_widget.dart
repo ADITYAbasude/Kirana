@@ -222,6 +222,7 @@ class _CartWidgetState extends State<CartWidget> {
         .ref('users/${uid}/cart/${widget.cart['product_id']}')
         .remove()
         .then((value) {
+      print(widget.index);
       widget.cartListCallBack(widget.index);
     });
   }

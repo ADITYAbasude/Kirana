@@ -20,19 +20,20 @@ class ProductDetailedScreen extends StatefulWidget {
   _ProductDetailedScreenState createState() => _ProductDetailedScreenState();
 }
 
-double _rating = 0;
 ScrollController? _controller;
-
-// check that, this product is already in user cart or not 🙄
-bool productInCart = false;
-
-// check that, this product is favorite product or not 🙄
-bool _isFavorite = false;
 
 class _ProductDetailedScreenState extends State<ProductDetailedScreen>
     with SingleTickerProviderStateMixin {
   //tab controller
   TabController? _tabController;
+
+  double _rating = 0;
+
+// check that, this product is already in user cart or not 🙄
+  bool productInCart = false;
+
+// check that, this product is favorite product or not 🙄
+  bool _isFavorite = false;
 
   // check that a particular product is in stock or not
   bool inStock = true;
@@ -57,6 +58,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
 
   @override
   void initState() {
+    print('working');
     _checkFavoriteStatus(widget.productData);
     _getNumbersOfReviews(widget.productData);
     productStock = double.parse(widget.productData['product_stock']);
@@ -272,7 +274,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                     ),
                     onPressed: () {
                       addToCart(
-                          widget.productData, context, productInCartCallback);
+                          widget.productData, context);
                     },
                     icon: const Icon(
                       Icons.add_shopping_cart_rounded,
@@ -366,6 +368,10 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
       if (value.exists && value.hasChild(productData['product_id'])) {
         setState(() {
           _isFavorite = true;
+        });
+      } else {
+        setState(() {
+          _isFavorite = false;
         });
       }
     });

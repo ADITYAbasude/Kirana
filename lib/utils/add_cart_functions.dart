@@ -4,12 +4,12 @@ import 'package:grocery_app/utils/get_info.dart';
 
 import '../tools/SnackBar.dart';
 
-void addToCart(var productData, context, Function productInCartCallback) async {
+void addToCart(var productData, context) async {
   bool productInCart = false;
   DatabaseReference ref = FirebaseDatabase.instance.ref('users/${uid}/cart');
   await ref.get().then((value) {
     if (value.exists && value.hasChild(productData['product_id'])) {
-      productInCartCallback(true);
+      // productInCartCallback(true);
       productInCart = true;
       showSnackBar(context, "Product already in our cart");
     }

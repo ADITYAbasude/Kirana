@@ -2,32 +2,22 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_const_constructors, deprecated_member_use, avoid_print, duplicate_ignore
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:grocery_app/constants/distanceCalculator.dart';
-import 'package:grocery_app/constants/get_permissions.dart';
-import 'package:grocery_app/screens/home/product_detailed_screen.dart';
+import 'package:grocery_app/screens/splash/splash_screen.dart';
 import 'package:grocery_app/screens/home/search_screen.dart';
 import 'package:grocery_app/widget/product_card_widget.dart';
 import 'package:grocery_app/widget/store_card_widget.dart';
-import 'package:location/location.dart' as loc hide PermissionStatus;
-import 'package:permission_handler/permission_handler.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:grocery_app/utils/get_info.dart';
 
 import '../../tools/loading.dart';
 
 class HomeScreen extends StatefulWidget {
-  static List nearestStoreList = [];
-  static List products = [];
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 String uid = FirebaseAuth.instance.currentUser!.uid;
 
-var locationAccessStatus;
 var storageAccessStatus;
 
 bool _showProgressBar = false;
@@ -47,26 +37,8 @@ final categoriesIcons = [
   "assets/icons/meat.png"
 ];
 
-loc.Location location = loc.Location();
-
-// firebase database ref
-DatabaseReference _dbRef = FirebaseDatabase.instance.ref('sellers');
-
 class _HomeScreenState extends State<HomeScreen> {
-  static Position? currentLocation;
-  static String address = "";
-
   Future<dynamic> username = UserData.userName(uid);
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
-      // location access
-      LocationAccess();
-    }).whenComplete(() {
-      _getNearestStore();
-    });
-  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5,
             ),
             Text(
-              address,
+              SplashScreen.address,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,
@@ -176,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         ]);
                       })),
-              HomeScreen.nearestStoreList.isNotEmpty
+              SplashScreen.nearestStoreList.isNotEmpty
                   ? Container(
                       margin: EdgeInsets.only(top: 20, left: 20),
                       child: Text(
@@ -186,21 +158,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   : Text(""),
-              HomeScreen.nearestStoreList.isNotEmpty
+              SplashScreen.nearestStoreList.isNotEmpty
                   ? Container(
                       height: 200,
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,
-                        itemCount: HomeScreen.nearestStoreList.length,
+                        itemCount: SplashScreen.nearestStoreList.length,
                         itemBuilder: (context, index) {
                           return StoreCardWidget(
-                              HomeScreen.nearestStoreList[index]);
+                              SplashScreen.nearestStoreList[index]);
                         },
                       ),
                     )
                   : Text(''),
-              HomeScreen.products.isNotEmpty
+              SplashScreen.products.isNotEmpty
                   ? Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -211,15 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   : Text(''),
-              HomeScreen.products.isNotEmpty
+              SplashScreen.products.isNotEmpty
                   ? Container(
                       height: 250,
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,
-                        itemCount: HomeScreen.products.length,
+                        itemCount: SplashScreen.products.length,
                         itemBuilder: (context, index) {
-                          return ProductCardWidget(HomeScreen.products[index]);
+                          return ProductCardWidget(
+                              SplashScreen.products[index]);
                         },
                       ),
                     )
@@ -242,49 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  LocationAccess() async {
-    locationAccessStatus = await Permission.location.status;
-
-    if (locationAccessStatus == PermissionStatus.granted) {
-      await GetPermissions().RequestGpsService().then((value) {
-        _getCurrentAddress();
-      });
-    } else {
-      await GetPermissions().LocationAccessRequest().then((value) async {
-        await GetPermissions().RequestGpsService();
-      });
-    }
-  }
-
-  Future<Position> locateUser() async {
-    return Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-  }
-
-  Future<void> _getCurrentAddress() async {
-    if (mounted) {
-      if (await location.serviceEnabled()) {
-        currentLocation = await locateUser();
-        await placemarkFromCoordinates(
-                currentLocation!.latitude, currentLocation!.longitude,
-                localeIdentifier: 'en')
-            .then(
-          (List<Placemark> placeMarks) {
-            Placemark place = placeMarks[0];
-            setState(() {
-              address =
-                  '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}';
-            });
-          },
-        );
-      }
-    }
-  }
-
   Route _searchRouteTranslation() {
     return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            SearchScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) => SearchScreen(),
         transitionsBuilder: ((context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset(0.0, 0.0);
@@ -298,44 +231,5 @@ class _HomeScreenState extends State<HomeScreen> {
             child: child,
           );
         }));
-  }
-
-  void _getNearestStore() async {
-    _showProgressBar = true;
-    HomeScreen.nearestStoreList.clear();
-    HomeScreen.products.clear();
-    await _dbRef.get().then((value) async {
-      for (var snapshot in value.children) {
-        await snapshot.ref.child('info').get().then((value) async {
-          var data = value.value as Map;
-          Position location1 = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.high);
-          // print(data);
-          double distance = getDistance(
-              location1, double.parse(data['lat']), double.parse(data['lng']));
-          if ((distance / 1000).round() < 4) {
-            setState(() {
-              HomeScreen.nearestStoreList.add(data);
-            });
-            await snapshot.ref.child('products').get().then((value) async {
-              _showProgressBar = false;
-              for (var snapshot in value.children) {
-                await snapshot.ref.child('info').get().then((value) {
-                  var product = value.value as Map;
-                  setState(() {
-                    HomeScreen.products.add(product);
-                  });
-                });
-              }
-            });
-          }
-        });
-      }
-    }).whenComplete(() {
-      HomeScreen.nearestStoreList.shuffle();
-      HomeScreen.products.shuffle();
-    }).onError((error, stackTrace) {
-      _showProgressBar = false;
-    });
   }
 }
