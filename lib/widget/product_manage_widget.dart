@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables
+// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, unused_field
 
 import 'dart:io';
 
@@ -7,10 +7,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/seller/seller_home_screen.dart';
-import 'package:grocery_app/tools/SnackBar.dart';
-import 'package:grocery_app/tools/Toast.dart';
-import 'package:grocery_app/tools/loading.dart';
+import 'package:Kirana/screens/seller/seller_home_screen.dart';
+import 'package:Kirana/tools/SnackBar.dart';
+import 'package:Kirana/tools/Toast.dart';
+import 'package:Kirana/tools/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,36 +25,31 @@ class ProductManageWidget extends StatefulWidget {
   _ProductManageWidgetState createState() => _ProductManageWidgetState();
 }
 
-// ignore: prefer_typing_uninitialized_variables
-var downloadUrl;
-String _productCriteria = "Vegetable";
-
-// textfield controllers
-final _productNameController = TextEditingController();
-final _productPriceController = TextEditingController();
-final _productStockController = TextEditingController();
-final _productDescriptionController = TextEditingController();
-
+final List<String> _productTypeList = ['Vegetable', 'Fruit', 'General', 'Meal'];
 // lists
 List<String> units = ["/ 500 g", "/ 1 pc"];
 
-const List<String> _productTypeList = <String>[
-  'Vegetable',
-  'Fruit',
-  'General',
-  'Meal'
-];
+class _ProductManageWidgetState extends State<ProductManageWidget> {
+// ignore: prefer_typing_uninitialized_variables
+  var downloadUrl;
+  String _productCriteria = "Vegetable";
+
+// textfield controllers
+  final _productNameController = TextEditingController();
+  final _productPriceController = TextEditingController();
+  final _productStockController = TextEditingController();
+  final _productDescriptionController = TextEditingController();
 
 // default data variables
-String unitsCriteriaData = "/ 500 g";
+  String unitsCriteriaData = "/ 500 g";
 
 // bool for progressBar visibility
-bool _loading = false;
-
-class _ProductManageWidgetState extends State<ProductManageWidget> {
+  bool _loading = false;
   var _image;
 
   String _storeTypeValue = _productTypeList.first;
+
+  String _unitsTypeValue = units.first;
 
   @override
   void initState() {
@@ -81,14 +76,22 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
       setState(() {
         _productCriteria = SellerHomeScreen
             .products[SellerProductDetailedScreen.index!]['product_criteria'];
+
+        unitsCriteriaData = SellerHomeScreen
+            .products[SellerProductDetailedScreen.index!]['product_unit'];
+
+        _unitsTypeValue =
+            SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+                        ['product_unit'] ==
+                    '/ 1 pc'
+                ? units.last
+                : units.first;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String _unitsTypeValue = units.first;
-
     var size = MediaQuery.of(context).size;
     int ScreenWidth = size.width.toInt() - 70;
 
@@ -310,7 +313,9 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                               label: Text("Product criteria")),
                           value: _productCriteria,
                           onChanged: (value) {
-                            _productCriteria = value.toString();
+                            setState(() {
+                              _productCriteria = value.toString();
+                            });
                           },
                           items: _productTypeList
                               .map<DropdownMenuItem<String>>((String value) {
@@ -351,7 +356,9 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                                       label: Text("Units")),
                                   value: _unitsTypeValue,
                                   onChanged: (value) {
-                                    unitsCriteriaData = value.toString();
+                                    setState(() {
+                                      unitsCriteriaData = value.toString();
+                                    });
                                   },
                                   items: units.map<DropdownMenuItem<String>>(
                                       (String value) {

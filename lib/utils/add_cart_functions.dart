@@ -1,6 +1,6 @@
 // add product in your cart
 import 'package:firebase_database/firebase_database.dart';
-import 'package:grocery_app/utils/get_info.dart';
+import 'package:Kirana/utils/get_info.dart';
 
 import '../tools/SnackBar.dart';
 

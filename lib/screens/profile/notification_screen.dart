@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:grocery_app/constants/SystemColors.dart';
+import 'package:Kirana/constants/SystemColors.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);

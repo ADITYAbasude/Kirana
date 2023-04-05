@@ -5,15 +5,12 @@ This file is created by Aditya
 copyright year 2022
 */
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:grocery_app/screens/auth/login_signup_screen.dart';
-import 'package:grocery_app/screens/main_screen.dart';
-import 'package:grocery_app/tools/Toast.dart';
+import 'package:Kirana/screens/auth/login_signup_screen.dart';
+import 'package:Kirana/screens/main_screen.dart';
+import 'package:Kirana/screens/splash/splash_screen.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../tools/loading.dart';
@@ -96,7 +93,6 @@ class _OTPScreenState extends State<OTPScreen> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
                           padding: EdgeInsets.all(10),
-                          elevation: 1,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30))),
                       onPressed: () async {
@@ -148,7 +144,7 @@ not, if not then it will stop the login process else it will continue the login 
           .whenComplete(() {
         _showProgressBar = false;
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MainScreen()));
+            context, MaterialPageRoute(builder: (context) => SplashScreen()));
       });
     }).onError((error, stackTrace) {
       _showProgressBar = false;

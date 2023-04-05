@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/cart/cart_screen.dart';
-import 'package:grocery_app/screens/home/search_screen.dart';
-import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
-import 'package:grocery_app/screens/profile/profile_screen.dart';
-import 'package:grocery_app/screens/home/home_screens.dart';
+import 'package:Kirana/screens/cart/cart_screen.dart';
+import 'package:Kirana/screens/home/search_screen.dart';
+import 'package:Kirana/screens/profile/my_favorites_screen.dart';
+import 'package:Kirana/screens/profile/profile_screen.dart';
+import 'package:Kirana/screens/home/home_screens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({Key? key}) : super(key: key);
+  final Function callbackNearestStoreAndProductFunction;
+  MainScreen(this.callbackNearestStoreAndProductFunction);
   static int itemIndex = 0;
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -17,12 +18,17 @@ const double iconSize = 25;
 String exist = "";
 
 class _MainScreenState extends State<MainScreen> {
-  final screens = [
-    HomeScreen(),
-    CartScreen(),
-    MyFavoritesScreen(),
-    ProfileScreen()
-  ];
+  @override
+  List screens = [];
+  void initState() {
+    screens = [
+      HomeScreen(widget.callbackNearestStoreAndProductFunction),
+      CartScreen(),
+      MyFavoritesScreen(),
+      ProfileScreen()
+    ];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

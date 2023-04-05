@@ -1,20 +1,22 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/utils/get_info.dart';
-import 'package:grocery_app/tools/Toast.dart';
+import 'package:Kirana/utils/get_info.dart';
 
 import '../constants/ConstantValue.dart';
 import '../screens/home/product_detailed_screen.dart';
 
 class CartWidget extends StatefulWidget {
   final cart;
-  final Function cartListCallBack;
+  final Function removeProductFromCartListCallback;
   final int index;
-  final Function updateProductPriceCallback;
-  final Function updateCartListDataCallback;
-  const CartWidget(this.cart, this.cartListCallBack, this.index,
-      this.updateProductPriceCallback, this.updateCartListDataCallback);
+  final Function updateSubTotalPriceCallback;
+  final Function updateProductQuantityCallback;
+  const CartWidget(
+      this.cart,
+      this.removeProductFromCartListCallback,
+      this.index,
+      this.updateSubTotalPriceCallback,
+      this.updateProductQuantityCallback);
 
   @override
   _CartWidgetState createState() => _CartWidgetState();
@@ -26,8 +28,8 @@ class _CartWidgetState extends State<CartWidget> {
   int productQuantity = 1;
   @override
   void initState() {
-    _getProductInfo();
     super.initState();
+    _getProductInfo();
     productQuantity = widget.cart['product_quantity'];
   }
 
@@ -197,7 +199,7 @@ class _CartWidgetState extends State<CartWidget> {
       if (value.exists) {
         setState(() {
           productinfo = value.value as Map;
-          widget.updateProductPriceCallback(
+          widget.updateSubTotalPriceCallback(
               double.parse(productinfo['product_price']), widget.index);
           if (productinfo['product_unit'] == '/ 1 pc') {
             unit = '1 pc';
@@ -213,7 +215,7 @@ class _CartWidgetState extends State<CartWidget> {
     await FirebaseDatabase.instance
         .ref('users/${uid}/cart/${widget.cart['product_id']}')
         .update({'product_quantity': productQuantity}).then((value) {
-      widget.updateCartListDataCallback(productQuantity, widget.index);
+      widget.updateProductQuantityCallback(productQuantity, widget.index);
     });
   }
 
@@ -223,7 +225,7 @@ class _CartWidgetState extends State<CartWidget> {
         .remove()
         .then((value) {
       print(widget.index);
-      widget.cartListCallBack(widget.index);
+      widget.removeProductFromCartListCallback(widget.index);
     });
   }
 

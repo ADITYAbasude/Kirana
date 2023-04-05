@@ -3,12 +3,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:grocery_app/constants/ConstantValue.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/tools/SnackBar.dart';
-import 'package:grocery_app/utils/add_cart_functions.dart';
-import 'package:grocery_app/widget/add_review_widget.dart';
-import 'package:grocery_app/widget/review_card_widget.dart';
+import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/tools/SnackBar.dart';
+import 'package:Kirana/utils/add_cart_functions.dart';
+import 'package:Kirana/widget/add_review_widget.dart';
+import 'package:Kirana/widget/buy_product_widget.dart';
+import 'package:Kirana/widget/review_card_widget.dart';
 
 import '../../utils/get_info.dart';
 
@@ -273,8 +274,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                       ),
                     ),
                     onPressed: () {
-                      addToCart(
-                          widget.productData, context);
+                      addToCart(widget.productData, context);
                     },
                     icon: const Icon(
                       Icons.add_shopping_cart_rounded,
@@ -290,7 +290,29 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      showModalBottomSheet(
+                          isDismissible: true,
+                          isScrollControlled: true,
+                          enableDrag: true,
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return DraggableScrollableSheet(
+                              initialChildSize: 0.6,
+                              minChildSize: 0.4,
+                              maxChildSize: 0.6,
+                              builder: (_, controller) {
+                                return StatefulBuilder(
+                                  builder: (BuildContext context, setState) {
+                                    return BuyProductWidget(
+                                        controller, widget.productData);
+                                  },
+                                );
+                              },
+                            );
+                          });
+                    },
                     child: Text(
                       "Buy",
                       style: TextStyle(color: textColor, fontSize: 16),

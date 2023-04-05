@@ -1,18 +1,19 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:grocery_app/screens/auth/login_signup_screen.dart';
-import 'package:grocery_app/screens/main_screen.dart';
+import 'package:Kirana/screens/auth/login_signup_screen.dart';
+import 'package:Kirana/screens/main_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:grocery_app/utils/distanceCalculator.dart';
-import 'package:grocery_app/utils/get_permissions.dart';
+import 'package:Kirana/utils/distanceCalculator.dart';
+import 'package:Kirana/utils/get_permissions.dart';
 
 import 'package:location/location.dart' as loc hide PermissionStatus;
 
@@ -46,9 +47,19 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(Duration.zero, () {
       LocationAccess();
-    }).whenComplete(() {
-      _getNearestStore();
     });
+  }
+
+  callbackNearestStoreAndProductFunction() {
+    // print('callback call');
+    // if (auth != null) {
+    //   _getCurrentAddress();
+    //   _getNearestStore();
+    // } else {Y
+    //   // setState(() {
+    //   //   _showProgressBar = false;
+    //   // });
+    // }
   }
 
   LocationAccess() async {
@@ -56,13 +67,29 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (await locationAccessStatus == PermissionStatus.granted) {
       await GetPermissions().RequestGpsService().then((value) {
-        _getCurrentAddress();
+        if (auth != null) {
+          print('request 1');
+          _getCurrentAddress();
+          _getNearestStore();
+        } else {
+          setState(() {
+            _showProgressBar = false;
+          });
+        }
       });
     } else {
       await GetPermissions().LocationAccessRequest().then((value) async {
         if (await locationAccessStatus == PermissionStatus.granted) {
           await GetPermissions().RequestGpsService().then((value) {
-            _getCurrentAddress();
+            print('request 2');
+            if (auth != null) {
+              _getCurrentAddress();
+              _getNearestStore();
+            }
+            // else {
+            //   // _showProgressBar = false;Y
+            // }
+            print('request 2');
           });
         }
       });
@@ -127,6 +154,9 @@ class _SplashScreenState extends State<SplashScreen> {
       }).whenComplete(() {
         SplashScreen.nearestStoreList.shuffle();
         SplashScreen.products.shuffle();
+        setState(() {
+          _showProgressBar = false;
+        });
       }).onError((error, stackTrace) {
         _showProgressBar = false;
       });
@@ -143,8 +173,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 // ignore: unnecessary_null_comparison
                 if (auth != null)
                   {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => MainScreen()))
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MainScreen(
+                                callbackNearestStoreAndProductFunction)))
                   }
                 else
                   {
@@ -165,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Image(image: AssetImage('assets/icons/store.png'), width: 100),
         Container(
-            padding: EdgeInsets.only(top: 5), child: Text("#AabAapKiApniDukan"))
+            padding: EdgeInsets.only(top: 5), child: Text('#AabAapKiApniDukan'))
       ])),
     );
   }

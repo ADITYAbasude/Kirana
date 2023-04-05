@@ -2,15 +2,15 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/constants/ConstantValue.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/screens/orders/orders_screen.dart';
-import 'package:grocery_app/screens/profile/my_address_screen.dart';
-import 'package:grocery_app/screens/profile/my_favorites_screen.dart';
-import 'package:grocery_app/screens/profile/my_profile_screen.dart';
-import 'package:grocery_app/screens/profile/notification_screen.dart';
-import 'package:grocery_app/screens/seller/seller_screen.dart';
-import 'package:grocery_app/screens/splash/splash_screen.dart';
+import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/screens/orders/orders_screen.dart';
+import 'package:Kirana/screens/profile/my_address_screen.dart';
+import 'package:Kirana/screens/profile/my_favorites_screen.dart';
+import 'package:Kirana/screens/profile/my_profile_screen.dart';
+import 'package:Kirana/screens/profile/notification_screen.dart';
+import 'package:Kirana/screens/seller/seller_screen.dart';
+import 'package:Kirana/screens/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/get_info.dart';

@@ -13,11 +13,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-// import 'package:grocery_app/constants/geo_locator.dart';
-import 'package:grocery_app/screens/main_screen.dart';
-import 'package:grocery_app/tools/SnackBar.dart';
-import 'package:grocery_app/tools/loading.dart';
+import 'package:Kirana/constants/SystemColors.dart';
+// import 'package:Kirana/constants/geo_locator.dart';
+import 'package:Kirana/tools/SnackBar.dart';
+import 'package:Kirana/tools/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -452,9 +451,8 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
           _showProgressBar = false;
         });
         Navigator.pop(context);
-        MainScreen.itemIndex = 3;
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MainScreen()));
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => MainScreen()));
       });
     }
   }

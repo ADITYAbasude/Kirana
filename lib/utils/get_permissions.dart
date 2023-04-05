@@ -1,4 +1,4 @@
-import 'package:grocery_app/screens/splash/splash_screen.dart';
+import 'package:Kirana/screens/splash/splash_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class GetPermissions {

@@ -2,8 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/tools/Toast.dart';
+import 'package:Kirana/constants/SystemColors.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../utils/get_info.dart';

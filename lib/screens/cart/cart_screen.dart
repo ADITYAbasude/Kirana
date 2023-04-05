@@ -2,16 +2,17 @@
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/constants/ConstantValue.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/utils/get_info.dart';
-import 'package:grocery_app/widget/cart_widget.dart';
+import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/utils/get_info.dart';
+import 'package:Kirana/widget/cart_widget.dart';
 
 import '../../tools/loading.dart';
 
 class CartScreen extends StatefulWidget {
   @override
   _CartScreenState createState() => _CartScreenState();
+  static List carts = [];
 }
 
 // db reference
@@ -19,8 +20,7 @@ DatabaseReference dbRef = FirebaseDatabase.instance.ref('users/${uid}/cart');
 
 class _CartScreenState extends State<CartScreen> {
   // list of carts
-  static List carts = [];
-  static Map<int, double> productPrice = {};
+  static List productPrice = [];
   // sub total Price
   double subTotalPrice = 0;
 
@@ -32,38 +32,49 @@ class _CartScreenState extends State<CartScreen> {
 
   bool _showProgressBar = false;
 
-  updateProductPriceCallback(double price, int index) {
+  updateSubTotalPriceCallback(double price, int index) {
     setState(() {
-      productPrice[index] = price;
-      subTotalPrice += price;
+      productPrice.add(price);
     });
-    calculateThePriceOfProduct(index);
+    calculateThePriceOfProduct();
   }
 
-  cartListCallback(int index) {
+  removeProductFromCartListCallback(int index) {
     setState(() {
-      print(index);
-      carts.removeAt(index);
+      CartScreen.carts.removeAt(index);
+      productPrice.removeAt(index);
     });
-    calculateThePriceOfProduct(index);
+    print(CartScreen.carts);
+    print(productPrice);
+    calculateThePriceOfProduct();
   }
 
-  updateCartListDataCallback(int quantity, int index) {
+  updateProductQuantityCallback(int quantity, int index) {
     setState(() {
-      carts.elementAt(index)['product_quantity'] = quantity;
+      CartScreen.carts.elementAt(index)['product_quantity'] = quantity;
     });
-    calculateThePriceOfProduct(index);
+    calculateThePriceOfProduct();
   }
 
-  void calculateThePriceOfProduct(int index) {
+  void calculateThePriceOfProduct() {
+    // subTotalPrice = 0;
+    // print("cartlist lenL: ${CartScreen.carts.length}");
+    // setState(() {
+    //   subTotalPrice += CartScreen.carts.elementAt(index)['product_quantity'] *
+    //       productPrice[index];
+    //   print('SubTotal price: ${subTotalPrice}');
+    // });
+    // setState(() {
+    //   totalPrice = subTotalPrice + shippingCharges;
+    // });
+
     subTotalPrice = 0;
-    for (int i = 0; i < carts.length; i++) {
-      setState(() {
-        subTotalPrice +=
-            carts.elementAt(index)['product_quantity'] * productPrice[index];
-        print(subTotalPrice);
-        print('product price: ${productPrice[index]}');
-      });
+    for (int i = 0; i < productPrice.length; i++) {
+      print("index $i");
+      print(CartScreen.carts.elementAt(i)['product_quantity']);
+      print(productPrice[i]);
+      subTotalPrice +=
+          CartScreen.carts.elementAt(i)['product_quantity'] * productPrice[i];
     }
     setState(() {
       totalPrice = subTotalPrice + shippingCharges;
@@ -99,10 +110,14 @@ class _CartScreenState extends State<CartScreen> {
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: carts.length,
+                  itemCount: CartScreen.carts.length,
                   itemBuilder: (context, index) {
-                    return CartWidget(carts[index], cartListCallback, index,
-                        updateProductPriceCallback, updateCartListDataCallback);
+                    return CartWidget(
+                        CartScreen.carts[index],
+                        removeProductFromCartListCallback,
+                        index,
+                        updateSubTotalPriceCallback,
+                        updateProductQuantityCallback);
                   },
                 ),
                 Container(
@@ -221,16 +236,18 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _getProductsFromCart() async {
-    carts.clear();
+    CartScreen.carts.clear();
     await dbRef.get().then((value) {
       if (value.exists) {
         for (var data in value.children) {
           setState(() {
-            carts.add(data.value);
+            CartScreen.carts.add(data.value);
           });
         }
       }
-      _showProgressBar = false;
+      setState(() {
+        _showProgressBar = false;
+      });
     }).onError((error, stackTrace) {
       _showProgressBar = false;
     });

@@ -1,43 +1,42 @@
 // ignore: prefer_const_literals_to_create_immutables
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_const_constructors, deprecated_member_use, avoid_print, duplicate_ignore
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_const_constructors, deprecated_member_use, avoid_print, duplicate_ignore, prefer_final_fields
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/splash/splash_screen.dart';
-import 'package:grocery_app/screens/home/search_screen.dart';
-import 'package:grocery_app/widget/product_card_widget.dart';
-import 'package:grocery_app/widget/store_card_widget.dart';
-import 'package:grocery_app/utils/get_info.dart';
+import 'package:Kirana/screens/splash/splash_screen.dart';
+import 'package:Kirana/screens/home/search_screen.dart';
+import 'package:Kirana/widget/product_card_widget.dart';
+import 'package:Kirana/widget/store_card_widget.dart';
+import 'package:Kirana/utils/get_info.dart';
 
 import '../../tools/loading.dart';
 
 class HomeScreen extends StatefulWidget {
+  final Function callbackNearestStoreAndProductFunction;
+  HomeScreen(this.callbackNearestStoreAndProductFunction);
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-String uid = FirebaseAuth.instance.currentUser!.uid;
-
-var storageAccessStatus;
-
-bool _showProgressBar = false;
-
-List<Color> categoriesColors = [
-  Colors.green.shade50,
-  Colors.red.shade50,
-  Colors.yellow.shade50,
-  Colors.purple.shade50
-];
-
-final categoriesName = ["Vegetables", "Fruits", "Milks & Egg", "Meat"];
-final categoriesIcons = [
-  "assets/icons/vegetable.png",
-  "assets/icons/fruit.png",
-  "assets/icons/egg_milk.png",
-  "assets/icons/meat.png"
-];
-
 class _HomeScreenState extends State<HomeScreen> {
+  var storageAccessStatus;
+
+  bool _showProgressBar = false;
+
+  List<Color> categoriesColors = [
+    Colors.green.shade50,
+    Colors.red.shade50,
+    Colors.yellow.shade50,
+    Colors.pink.shade50
+  ];
+
+  final categoriesName = ["Vegetables", "Fruits", "Beverage", "Household"];
+  final categoriesIcons = [
+    "assets/icons/vegetable.png",
+    "assets/icons/fruit.png",
+    "assets/icons/beverage.png",
+    "assets/icons/household.png"
+  ];
+
   Future<dynamic> username = UserData.userName(uid);
 
   Widget build(BuildContext context) {
@@ -131,12 +130,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Column(children: [
                           Container(
                             margin: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(20),
                             width: 70,
                             height: 70,
                             decoration: BoxDecoration(
                                 color: categoriesColors[index],
                                 borderRadius: BorderRadius.circular(50)),
-                            child: Image.asset(categoriesIcons[index]),
+                            child: Image.asset(
+                              categoriesIcons[index],
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 0),

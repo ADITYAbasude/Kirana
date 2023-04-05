@@ -1,9 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/constants/ConstantValue.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/tools/loading.dart';
-import 'package:grocery_app/widget/product_card_widget.dart';
+import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/tools/loading.dart';
+import 'package:Kirana/widget/product_card_widget.dart';
 
 import '../../widget/store_card_widget.dart';
 
@@ -18,14 +18,14 @@ class SearchScreen extends StatefulWidget {
 final _searchController = TextEditingController();
 
 bool searchTextFieldClearOption = false;
-bool _loadingVisibility = false;
-bool _showShops = false;
-bool _showProducts = false;
 
 // database references
 DatabaseReference ref = FirebaseDatabase.instance.ref('sellers');
 
 class _SearchScreenState extends State<SearchScreen> {
+  bool _loadingVisibility = false;
+  bool _showShops = false;
+  bool _showProducts = false;
   @override
   Widget build(BuildContext context) {
     final double itemWidth = getScreenSize(context).width / 1.9;
@@ -129,7 +129,7 @@ class _SearchScreenState extends State<SearchScreen> {
               )),
             ),
             Visibility(
-              visible: !(_showShops && _showProducts),
+              visible: !(_showShops || _showProducts),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

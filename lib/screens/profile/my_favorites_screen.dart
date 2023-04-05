@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/utils/get_info.dart';
-import 'package:grocery_app/widget/favorite_product_cart_widget.dart';
-import 'package:grocery_app/widget/wishlist_is_empty.dart';
+import 'package:Kirana/utils/get_info.dart';
+import 'package:Kirana/widget/favorite_product_cart_widget.dart';
+import 'package:Kirana/widget/wishlist_is_empty.dart';
 
 import '../../constants/ConstantValue.dart';
 import '../../constants/SystemColors.dart';

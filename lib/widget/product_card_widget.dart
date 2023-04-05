@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/home/product_detailed_screen.dart';
+import 'package:Kirana/screens/home/product_detailed_screen.dart';
 
 class ProductCardWidget extends StatefulWidget {
   ProductCardWidget(this.productData);

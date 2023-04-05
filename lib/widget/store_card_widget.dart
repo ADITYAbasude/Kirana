@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
-import 'package:grocery_app/constants/SystemColors.dart';
-import 'package:grocery_app/screens/home/store_screen.dart';
+import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/screens/home/store_screen.dart';
 
 class StoreCardWidget extends StatelessWidget {
   StoreCardWidget(this.shopData);
@@ -91,32 +91,32 @@ class StoreCardWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis),
                     ),
                   ),
-                  Container(
-                    width: 45,
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: mainColor,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          "2",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: textColor),
-                        ),
-                        const Icon(
-                          Icons.star_rounded,
-                          color: Colors.white,
-                          size: 20,
-                        )
-                      ],
-                    ),
-                  )
+                  // Container(
+                  //   width: 45,
+                  //   margin:
+                  //       const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  //   padding: const EdgeInsets.all(5),
+                  //   decoration: BoxDecoration(
+                  //       color: mainColor,
+                  //       borderRadius: BorderRadius.circular(10)),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //     children: [
+                  //       Text(
+                  //         "2",
+                  //         style: TextStyle(
+                  //             fontSize: 16,
+                  //             fontWeight: FontWeight.w500,
+                  //             color: textColor),
+                  //       ),
+                  //       const Icon(
+                  //         Icons.star_rounded,
+                  //         color: Colors.white,
+                  //         size: 20,
+                  //       )
+                  //     ],
+                  //   ),
+                  // )
                 ])
               ],
             )),

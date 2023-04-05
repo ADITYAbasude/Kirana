@@ -8,9 +8,9 @@ copyright year 2022
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/main_screen.dart';
-import 'package:grocery_app/screens/seller/seller_product_detailed_screen.dart';
-import 'package:grocery_app/widget/product_manage_widget.dart';
+import 'package:Kirana/screens/main_screen.dart';
+import 'package:Kirana/screens/seller/seller_product_detailed_screen.dart';
+import 'package:Kirana/widget/product_manage_widget.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({Key? key}) : super(key: key);
@@ -62,8 +62,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
           ],
           leading: IconButton(
               onPressed: (() {
-                Navigator.pop(context,
-                    MaterialPageRoute(builder: (context) => MainScreen()));
+                Navigator.pop(context);
               }),
               icon: const Icon(
                 Icons.arrow_back_ios_rounded,

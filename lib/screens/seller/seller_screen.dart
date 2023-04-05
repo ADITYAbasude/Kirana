@@ -8,9 +8,9 @@ copyright year 2022
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/seller/add_seller_detail_screen.dart';
-import 'package:grocery_app/screens/seller/seller_home_screen.dart';
-import 'package:grocery_app/tools/Toast.dart';
+import 'package:Kirana/screens/seller/add_seller_detail_screen.dart';
+import 'package:Kirana/screens/seller/seller_home_screen.dart';
+import 'package:Kirana/tools/Toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SellerScreen extends StatefulWidget {

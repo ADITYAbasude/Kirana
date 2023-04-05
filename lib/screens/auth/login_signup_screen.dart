@@ -11,9 +11,9 @@ NOTES: If you have to login then you will refer this mobile number (1234567890) 
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/auth/otp_screen.dart';
-import 'package:grocery_app/tools/Toast.dart';
-import 'package:grocery_app/tools/loading.dart';
+import 'package:Kirana/screens/auth/otp_screen.dart';
+import 'package:Kirana/tools/Toast.dart';
+import 'package:Kirana/tools/loading.dart';
 
 class LoginSignUpScreen extends StatefulWidget {
   const LoginSignUpScreen({Key? key}) : super(key: key);
