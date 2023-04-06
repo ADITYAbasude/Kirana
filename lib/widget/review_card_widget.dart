@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 
 class ReviewCardWidget extends StatefulWidget {
   ReviewCardWidget(this.allReviews);
@@ -20,7 +21,8 @@ class _ReviewCardWidgetState extends State<ReviewCardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime date = DateTime.parse(widget.allReviews['date']);
+    final date = DateTime.fromMillisecondsSinceEpoch(
+        int.parse(widget.allReviews['date'].toString()));
     return Container(
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(5),
@@ -43,7 +45,8 @@ class _ReviewCardWidgetState extends State<ReviewCardWidget> {
                       fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  '${date.day}/${date.month}/${date.year}',
+                  // '${date.day}/${date.month}/${date.year}',
+                  DateFormat("dd/MM/yyyy").format(date),
                   style: const TextStyle(fontSize: 12),
                 ),
               ],

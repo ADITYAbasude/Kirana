@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +42,7 @@ class _AddReviewWidgetState extends State<AddReviewWidget> {
       'product_id': widget.productData['product_id'],
       'seller_id': widget.productData['seller_id'],
       'review_id': pushKey,
-      'date': DateTime(currentDate.day, currentDate.month, currentDate.year)
-          .toString()
+      'date': currentDate.millisecondsSinceEpoch.toString()
     };
 
     await _dbRef.child('info').update({'rating': _productRating});

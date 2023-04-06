@@ -251,9 +251,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
       Map<String, dynamic> orderObject = {
         'product_id': widget.productData['product_id'],
         'seller_id': widget.productData['seller_id'],
-        'order_date': DateTime(_currentTime.day, _currentTime.month,
-                _currentTime.year, _currentTime.hour, _currentTime.hour)
-            .toString(),
+        'order_date': _currentTime.millisecondsSinceEpoch.toString(),
         'schedule_time': _scheduleTime,
         'order_id': pushKey,
         'payment_method': _paymentType,
