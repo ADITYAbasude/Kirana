@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, use_key_in_widget_constructors
 
+import 'package:Kirana/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -88,6 +89,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
       extendBodyBehindAppBar: true,
       extendBody: true,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: mainColor,
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -219,6 +222,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
               children: [
                 Container(
                   height: 40,
+                  width: double.infinity,
                   margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
                   decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -233,12 +237,19 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                       unselectedLabelColor: Colors.black,
                       labelStyle: const TextStyle(
                           fontWeight: FontWeight.w500, fontSize: 18),
-                      tabs: const [
-                        Tab(
-                          text: 'Product Info',
+                      labelPadding: const EdgeInsets.all(0),
+                      tabs: [
+                        Container(
+                          width: double.infinity,
+                          child: const Tab(
+                            text: 'Product Info',
+                          ),
                         ),
-                        Tab(
-                          text: 'Reviews',
+                        Container(
+                          width: double.infinity,
+                          child: const Tab(
+                            text: 'Reviews',
+                          ),
                         )
                       ]),
                 ),

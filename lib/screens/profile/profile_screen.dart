@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/constants/ConstantValue.dart';
 import 'package:Kirana/constants/SystemColors.dart';
-import 'package:Kirana/screens/orders/orders_screen.dart';
+import 'package:Kirana/screens/profile/orders_screen.dart';
 import 'package:Kirana/screens/profile/my_address_screen.dart';
 import 'package:Kirana/screens/profile/my_favorites_screen.dart';
 import 'package:Kirana/screens/profile/my_profile_screen.dart';
@@ -134,10 +134,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }),
                 ),
 
-                const Divider(
+                Divider(
                   indent: 20,
                   endIndent: 20,
                   thickness: 0.8,
+                  color: Colors.black.withOpacity(0.2),
                 ),
               ]),
             ),

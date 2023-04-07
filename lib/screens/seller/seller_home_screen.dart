@@ -5,6 +5,7 @@ This file is created by Aditya
 copyright year 2022
 */
 
+import 'package:Kirana/constants/SystemColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -193,6 +194,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
               });
             }),
         floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: mainColor,
           onPressed: () {
             ProductManageWidget.product_manage_status = "add";
             showModalBottomSheet(

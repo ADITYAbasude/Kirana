@@ -39,7 +39,7 @@ dependencies:
   firebase_core: ^1.24.0
   fluttertoast: ^8.0.9
   firebase_auth: ^3.11.1
-  pinput: ^2.2.14
+  pinput: ^2.2.31
   permission_handler: ^10.1.0
   location: ^4.4.0
   flutterfire_cli: ^0.2.6

@@ -255,6 +255,8 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
         'schedule_time': _scheduleTime,
         'order_id': pushKey,
         'payment_method': _paymentType,
+        'product_quantity': 1,
+        'product_price': widget.productData['product_price']
       };
 
       dbRef.set(orderObject).then((value) {

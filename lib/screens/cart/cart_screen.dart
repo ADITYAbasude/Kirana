@@ -174,7 +174,9 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       Container(
                         margin: EdgeInsets.fromLTRB(0, 0, 3, 9),
-                        child: Divider(),
+                        child: Divider(
+                          color: Colors.black.withOpacity(0.2),
+                        ),
                       ),
                       Container(
                         margin: EdgeInsets.fromLTRB(0, 0, 0, 16),
