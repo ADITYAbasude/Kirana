@@ -15,7 +15,7 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   static List orderList = [];
 
-  DatabaseReference _userOrdersRef =
+  final DatabaseReference _userOrdersRef =
       FirebaseDatabase.instance.ref('users/$uid/order');
   @override
   void initState() {
@@ -56,6 +56,7 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   _getUserOrders() async {
+    orderList.clear();
     await _userOrdersRef.get().then((value) {
       for (var data in value.children) {
         setState(() {
