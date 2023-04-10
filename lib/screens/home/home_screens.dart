@@ -177,9 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
               SplashScreen.products.isNotEmpty
                   ? Container(
                       margin:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                       child: Text(
-                        "Popular Deals",
+                        "Your area products",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),

@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_typing_uninitialized_variables
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -86,17 +85,13 @@ class _SplashScreenState extends State<SplashScreen> {
               _getCurrentAddress();
               _getNearestStore();
             }
-            // else {
-            //   // _showProgressBar = false;Y
-            // }
-            print('request 2');
           });
         }
       });
     }
   }
 
-  Future<void> _getCurrentAddress() async {
+  _getCurrentAddress() async {
     if (await location.serviceEnabled() ||
         await Permission.location.status == PermissionStatus.granted) {
       currentLocation = await UserData.locateUser();
@@ -126,7 +121,6 @@ class _SplashScreenState extends State<SplashScreen> {
             var data = value.value as Map;
             Position location1 = await Geolocator.getCurrentPosition(
                 desiredAccuracy: LocationAccuracy.high);
-            // print(data);
             double distance = getDistance(location1, double.parse(data['lat']),
                 double.parse(data['lng']));
             if ((distance / 1000).round() < 4) {
@@ -142,11 +136,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     });
                   });
                 }
-
-                // if (SplashScreen.products.length == value.children.length) {}
-                setState(() {
-                  _showProgressBar = false;
-                });
               });
             }
           });
@@ -164,13 +153,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  // ignore: duplicate_ignore
   Widget build(BuildContext context) {
     if (_showProgressBar == false) {
       Timer(
           Duration(seconds: 1),
           () => {
-                // ignore: unnecessary_null_comparison
                 if (auth != null)
                   {
                     Navigator.pushReplacement(
@@ -186,12 +173,8 @@ class _SplashScreenState extends State<SplashScreen> {
                         MaterialPageRoute(
                             builder: (context) => LoginSignUpScreen()))
                   }
-
-                // Navigator.pushReplacement(context,
-                //     MaterialPageRoute(builder: (context) => CartScreen()))
               });
     }
-    // ignore: prefer_const_constructor
     return Scaffold(
       backgroundColor: Colors.green,
       body: Center(

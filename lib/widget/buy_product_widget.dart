@@ -27,11 +27,15 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
   timeScheduleAnswer? _scheduleAnswer = timeScheduleAnswer.no;
   PaymentMethods? _paymentMethods = PaymentMethods.Online;
   String _paymentType = PaymentMethods.Online.toString();
+
+  late int _totalOrdersOfProduct;
+
   @override
   void initState() {
     _time = Time(hour: _currentTime.hour, minute: _currentTime.minute);
     getAddress();
     _scheduleTime = "${_time.hour.toString()}:${_time.minute.toString()}";
+    _totalOrdersOfProduct = widget.productData['total_orders'] ?? 0;
     super.initState();
   }
 
@@ -45,7 +49,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Color.fromARGB(0, 0, 0, 0),
       body: Container(
         width: getScreenSize(context).width,
         height: getScreenSize(context).height,
@@ -243,6 +247,8 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
 
   _orderProduct() async {
     if (_addressController.text.isNotEmpty) {
+      _totalOrdersOfProduct++;
+
       DatabaseReference dbRef =
           FirebaseDatabase.instance.ref('users/$uid/order').push();
 
@@ -254,16 +260,20 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
         'order_date': _currentTime.millisecondsSinceEpoch.toString(),
         'schedule_time': _scheduleTime,
         'order_id': pushKey,
-        'payment_method': _paymentType,
+        'payment_method': _paymentType.substring(15).toString(),
         'product_quantity': 1,
         'product_price': widget.productData['product_price']
       };
 
-      dbRef.set(orderObject).then((value) {
+      await dbRef.set(orderObject).then((value) async {
+        await FirebaseDatabase.instance
+            .ref(
+                'sellers/${widget.productData['seller_id']}/products/${widget.productData['product_id']}/info')
+            .update({'total_orders': _totalOrdersOfProduct});
         showSnackBar(context, 'Order placed successfully');
       });
     } else {
-      showSnackBar(context, "Fill your address field");
+      showSnackBar(context, 'Fill your address field');
     }
   }
 }

@@ -8,7 +8,7 @@ void showSnackBar(BuildContext context, String msg,
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(msg),
     backgroundColor: color,
-    behavior: SnackBarBehavior.floating,
+    behavior: SnackBarBehavior.fixed,
     duration: d,
   ));
 }

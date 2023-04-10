@@ -115,10 +115,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                   onTap: () {
                                     SellerProductDetailedScreen.index = index;
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SellerProductDetailedScreen()));
+                                        context, _productRouteTranslation());
                                   },
                                   child: Column(
                                     children: [
@@ -202,7 +199,8 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                 isScrollControlled: true,
                 enableDrag: true,
                 context: context,
-                backgroundColor: Colors.transparent,
+                barrierColor: Colors.black.withOpacity(0.1),
+                backgroundColor: Colors.black.withOpacity(0.1),
                 builder: (context) {
                   return DraggableScrollableSheet(
                     initialChildSize: 0.895,
@@ -243,5 +241,24 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
         });
       }
     });
+  }
+
+  Route _productRouteTranslation() {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SellerProductDetailedScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.easeInOut;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
   }
 }

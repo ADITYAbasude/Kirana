@@ -307,6 +307,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                           isScrollControlled: true,
                           enableDrag: true,
                           context: context,
+                          barrierColor: mainColor.withOpacity(0.1),
                           backgroundColor: Colors.transparent,
                           builder: (context) {
                             return DraggableScrollableSheet(

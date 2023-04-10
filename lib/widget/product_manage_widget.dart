@@ -2,17 +2,15 @@
 
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:Kirana/constants/SystemColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/seller/seller_home_screen.dart';
 import 'package:Kirana/tools/SnackBar.dart';
-import 'package:Kirana/tools/Toast.dart';
 import 'package:Kirana/tools/loading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
 
 import '../screens/seller/seller_product_detailed_screen.dart';
 
@@ -25,12 +23,18 @@ class ProductManageWidget extends StatefulWidget {
   _ProductManageWidgetState createState() => _ProductManageWidgetState();
 }
 
-final List<String> _productTypeList = ['Vegetable', 'Fruit', 'General', 'Meal'];
+final List<String> _productTypeList = [
+  'Vegetable',
+  'Fruit',
+  'Beverage',
+  'Household',
+  'Dairy',
+  'Snacks'
+];
 // lists
 List<String> units = ["/ 500 g", "/ 1 pc"];
 
 class _ProductManageWidgetState extends State<ProductManageWidget> {
-// ignore: prefer_typing_uninitialized_variables
   var downloadUrl;
   String _productCriteria = "Vegetable";
 
@@ -50,6 +54,9 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
   String _storeTypeValue = _productTypeList.first;
 
   String _unitsTypeValue = units.first;
+
+  // total orders of specific product
+  late final _totalOrdersOfProduct;
 
   @override
   void initState() {
@@ -86,6 +93,10 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                     '/ 1 pc'
                 ? units.last
                 : units.first;
+
+        _totalOrdersOfProduct = SellerHomeScreen
+                .products[SellerProductDetailedScreen.index!]['total_orders'] ??
+            0;
       });
     }
   }
@@ -138,6 +149,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
               ? SellerHomeScreen.products[SellerProductDetailedScreen.index!]
                   ['rating']
               : 0,
+          'total_orders': _totalOrdersOfProduct
         };
 
         FirebaseDatabase.instance
@@ -308,6 +320,8 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                           const EdgeInsets.only(top: 20, left: 30, right: 30),
                       width: double.infinity,
                       child: DropdownButtonFormField(
+                          dropdownColor: Colors.green[100],
+                          borderRadius: BorderRadius.circular(10),
                           decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               label: Text("Product criteria")),
@@ -320,6 +334,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                           items: _productTypeList
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
+                              alignment: Alignment.center,
                               value: value,
                               child: Text(value),
                             );
