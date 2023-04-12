@@ -24,6 +24,12 @@ class MyApp extends StatelessWidget {
             onPrimary: mainColor,
             onSecondary: mainColor),
         primarySwatch: mainColor,
+        bottomSheetTheme: const BottomSheetThemeData(
+            backgroundColor: Colors.transparent,
+            modalBackgroundColor: Colors.transparent,
+            modalBarrierColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent),
+        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: mainColor,
         ),

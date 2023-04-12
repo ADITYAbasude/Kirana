@@ -1,6 +1,7 @@
 // ignore: prefer_const_literals_to_create_immutables
 // ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_const_constructors, deprecated_member_use, avoid_print, duplicate_ignore, prefer_final_fields
 
+import 'package:Kirana/screens/home/categories_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
 import 'package:Kirana/screens/home/search_screen.dart';
@@ -26,15 +27,26 @@ class _HomeScreenState extends State<HomeScreen> {
     Colors.green.shade50,
     Colors.red.shade50,
     Colors.yellow.shade50,
-    Colors.pink.shade50
+    Colors.pink.shade50,
+    Colors.orange.shade50,
+    Colors.deepOrange.shade50,
   ];
 
-  final categoriesName = ["Vegetables", "Fruits", "Beverage", "Household"];
+  final categoriesName = [
+    "Vegetable",
+    "Fruit",
+    "Beverage",
+    "Household",
+    "Snack",
+    "Dairy"
+  ];
   final categoriesIcons = [
     "assets/icons/vegetable.png",
     "assets/icons/fruit.png",
     "assets/icons/beverage.png",
-    "assets/icons/household.png"
+    "assets/icons/household.png",
+    "assets/icons/snack.png",
+    "assets/icons/dairy.png"
   ];
 
   Future<dynamic> username = UserData.userName(uid);
@@ -125,19 +137,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView.builder(
                       physics: ClampingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemCount: 4,
+                      itemCount: categoriesName.length,
                       itemBuilder: (context, index) {
                         return Column(children: [
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            padding: const EdgeInsets.all(20),
-                            width: 70,
-                            height: 70,
-                            decoration: BoxDecoration(
-                                color: categoriesColors[index],
-                                borderRadius: BorderRadius.circular(50)),
-                            child: Image.asset(
-                              categoriesIcons[index],
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  _categoryScreenRouteTranslation(
+                                      categoriesName[index]));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(20),
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                  color: categoriesColors[index],
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: Image.asset(
+                                categoriesIcons[index],
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
                           ),
                           Padding(
@@ -179,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       margin:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                       child: Text(
-                        "Your area products",
+                        "Products from nearest store",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -220,6 +243,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Route _searchRouteTranslation() {
     return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => SearchScreen(),
+        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset(0.0, 0.0);
+          const curve = Curves.fastOutSlowIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }));
+  }
+
+  Route _categoryScreenRouteTranslation(String name) {
+    return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            CategoriesScreen(name),
         transitionsBuilder: ((context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset(0.0, 0.0);

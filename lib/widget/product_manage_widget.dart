@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:Kirana/constants/SystemColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,7 +28,7 @@ final List<String> _productTypeList = [
   'Beverage',
   'Household',
   'Dairy',
-  'Snacks'
+  'Snack'
 ];
 // lists
 List<String> units = ["/ 500 g", "/ 1 pc"];
@@ -56,7 +55,7 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
   String _unitsTypeValue = units.first;
 
   // total orders of specific product
-  late final _totalOrdersOfProduct;
+  int _totalOrdersOfProduct = 0;
 
   @override
   void initState() {
