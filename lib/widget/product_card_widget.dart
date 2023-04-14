@@ -49,6 +49,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       widget.productData['product_image'],
+                      filterQuality: FilterQuality.none,
                       fit: BoxFit.cover,
                       width: 150,
                       height: 120,

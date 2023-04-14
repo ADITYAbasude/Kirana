@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, use_key_in_widget_constructors
 
+//*  This file is created by Aditya */
+//*  copyright year 2022 */
+
 import 'package:Kirana/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +47,11 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
   double productStock = 0;
   // product unit
   String unit = '';
-  reviewCallBack(var review) {
+
+  // when user added a review then this callback will update the frontend of this screen
+  reviewCallBack(var review, int ratingByUser) {
     setState(() {
+      widget.productData['rating'] += ratingByUser;
       ProductDetailedScreen.allReviews.add(review);
       _rating = widget.productData['rating'] /
           ProductDetailedScreen.allReviews.length;
@@ -60,7 +66,6 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
 
   @override
   void initState() {
-    print('working');
     _checkFavoriteStatus(widget.productData);
     _getNumbersOfReviews(widget.productData);
     productStock = double.parse(widget.productData['product_stock']);
@@ -357,7 +362,6 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
             ProductDetailedScreen.allReviews.reversed;
             _rating = widget.productData['rating'] /
                 ProductDetailedScreen.allReviews.length;
-            print(_rating);
           });
         }
       }

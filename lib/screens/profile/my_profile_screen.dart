@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:Kirana/constants/SystemColors.dart';
@@ -14,17 +16,24 @@ class MyProfileScreen extends StatefulWidget {
   State<MyProfileScreen> createState() => gallery();
 }
 
-var _image;
-
-//text controllers
-final _userNameController = TextEditingController();
-final _phoneNumberController = TextEditingController();
-
 class gallery extends State<MyProfileScreen> {
   Future<dynamic> username = UserData.userName(uid);
 
+  var _image;
+
+//text controllers
+  final _userNameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+
   @override
   void initState() {
+    UserData.userData(uid).then((value) {
+      setState(() {
+        _image = value['user_image'];
+      });
+      _userNameController.text = value['name'];
+      _phoneNumberController.text = value['phone_number'];
+    });
     super.initState();
   }
 
@@ -72,14 +81,21 @@ class gallery extends State<MyProfileScreen> {
                             )
                           : ClipRRect(
                               borderRadius: BorderRadius.circular(100),
-                              child: Image.file(
-                                _image,
-                                width: 130,
-                                height: 130,
-                                fit: BoxFit.cover,
-                                filterQuality: FilterQuality.high,
-                              ),
-                            )),
+                              child: _image.toString().contains('https')
+                                  ? Image.network(
+                                      _image,
+                                      width: 130,
+                                      height: 130,
+                                      fit: BoxFit.cover,
+                                      filterQuality: FilterQuality.medium,
+                                    )
+                                  : Image.file(
+                                      _image,
+                                      width: 130,
+                                      height: 130,
+                                      fit: BoxFit.cover,
+                                      filterQuality: FilterQuality.medium,
+                                    ))),
                   Positioned(
                       bottom: 5,
                       right: 0,
@@ -148,13 +164,16 @@ class gallery extends State<MyProfileScreen> {
                     controller: _phoneNumberController,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(height: 1),
+                    enabled: false,
                     cursorHeight: 20,
                     decoration: InputDecoration(
                       hintText: "",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(color: mainColor, width: 2)),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor, width: 2)),
+                          borderSide: BorderSide(color: mainColor, width: 2)),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -168,7 +187,9 @@ class gallery extends State<MyProfileScreen> {
               child: ElevatedButton.icon(
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(mainColor)),
-                  onPressed: () {},
+                  onPressed: () {
+                    _uploadUserImageToDb();
+                  },
                   icon: const Icon(
                     Icons.save_alt_rounded,
                     color: Colors.white,
@@ -197,5 +218,19 @@ class gallery extends State<MyProfileScreen> {
     setState(() {
       _image = tempImage;
     });
+  }
+
+  _uploadUserImageToDb() async {
+    if (_image == null) return null;
+    await FirebaseStorage.instance
+        .ref('userImages/$uid')
+        .putFile(_image)
+        .then((value) => value.ref.getDownloadURL().then((value) {
+              FirebaseDatabase.instance.ref('users/$uid/info').update({
+                'user_image': value,
+                'name': _userNameController.text,
+                'phone_number': _phoneNumberController.text,
+              });
+            }));
   }
 }

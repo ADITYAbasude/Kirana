@@ -52,7 +52,7 @@ class _AddReviewWidgetState extends State<AddReviewWidget> {
         .set(addReview)
         .then((value) {
       _review.text = "";
-      widget.reviewCallBack(addReview);
+      widget.reviewCallBack(addReview, _ratingByUser);
       showSnackBar(context, "Thanks for reviewing");
     });
   }

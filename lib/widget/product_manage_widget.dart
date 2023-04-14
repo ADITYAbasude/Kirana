@@ -159,7 +159,6 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
             .child('info')
             .set(addProductObject)
             .whenComplete(() {
-          showSnackBar(context, "Product successfully added");
           setState(() {
             _loading = false;
             _image = null;
@@ -359,12 +358,13 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
                                         borderSide: BorderSide(width: 2))),
                               ),
                             ),
-
                             // unit of product
                             Container(
                               margin: const EdgeInsets.only(left: 10),
                               width: (ScreenWidth / 2) - 10,
                               child: DropdownButtonFormField(
+                                  dropdownColor: Colors.green[100],
+                                  borderRadius: BorderRadius.circular(10),
                                   decoration: const InputDecoration(
                                       border: OutlineInputBorder(),
                                       label: Text("Units")),

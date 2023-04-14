@@ -152,11 +152,15 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  void _mostOrderedProductsInTheApp() async {
+    _showProgressBar = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_showProgressBar == false) {
       Timer(
-          Duration(seconds: 1),
+          Duration(milliseconds: 500),
           () => {
                 if (auth != null)
                   {

@@ -52,7 +52,18 @@ final differentColors = [
 ];
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<dynamic> username = UserData.userName(uid);
+  var _image;
+  late String userName = "";
+  @override
+  void initState() {
+    UserData.userData(uid).then((value) {
+      setState(() {
+        _image = value['user_image'];
+        userName = value['name'];
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,13 +89,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Stack(
                     children: [
                       Container(
-                          child: Container(
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(100)),
-                      )),
+                          child: _image == null
+                              ? Container(
+                                  width: 130,
+                                  height: 130,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(100)),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: Image.network(
+                                    _image,
+                                    width: 130,
+                                    height: 130,
+                                    fit: BoxFit.cover,
+                                    filterQuality: FilterQuality.medium,
+                                  ))),
                       Visibility(
                           visible: true,
                           child: Positioned(
@@ -108,30 +129,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   margin: const EdgeInsets.only(top: 15),
                   alignment: Alignment.center,
-                  child: FutureBuilder(
-                      future: username,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            snapshot.data.toString(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        } else {
-                          return const Text(
-                            "",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              // fontWeight: FontWeight.w500,
-                            ),
-                          );
-                        }
-                      }),
+                  child: Text(userName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      )),
                 ),
 
                 Divider(

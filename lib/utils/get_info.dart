@@ -17,6 +17,18 @@ class UserData {
     return data['name'];
   }
 
+  static Future<dynamic> userData(String uid) async {
+    var a = await FirebaseDatabase.instance
+        .ref('users')
+        .child(uid)
+        .child('info')
+        .once();
+
+    var data = a.snapshot.value as Map;
+
+    return data;
+  }
+
   static Future<dynamic> getSellerName(String sellerId) async {
     var sellerName = "";
     await FirebaseDatabase.instance
