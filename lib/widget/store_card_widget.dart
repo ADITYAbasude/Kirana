@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:Kirana/utils/screen_route_translation.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/screens/home/store_screen.dart';
@@ -12,7 +13,7 @@ class StoreCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, _storeRouteTranslation());
+        Navigator.push(context, screenRouteTranslation(StoreScreen(shopData)));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -72,6 +73,7 @@ class StoreCardWidget extends StatelessWidget {
                         left: 10,
                         child: Text(
                           shopData['shop_name'],
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontSize: 25,
                               color: textColor,
@@ -122,24 +124,5 @@ class StoreCardWidget extends StatelessWidget {
             )),
       ),
     );
-  }
-
-  Route _storeRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            StoreScreen(shopData),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

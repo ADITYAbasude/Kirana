@@ -1,6 +1,7 @@
 // ignore: prefer_const_literals_to_create_immutables
 // ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, prefer_const_constructors_in_immutables, avoid_unnecessary_containers, prefer_const_constructors, deprecated_member_use, avoid_print, duplicate_ignore, prefer_final_fields
 
+import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/screens/home/categories_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
@@ -10,6 +11,7 @@ import 'package:Kirana/widget/store_card_widget.dart';
 import 'package:Kirana/utils/get_info.dart';
 
 import '../../tools/loading.dart';
+import '../../utils/screen_route_translation.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function callbackNearestStoreAndProductFunction;
@@ -99,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.push(context, _searchRouteTranslation());
+                Navigator.push(context, screenRouteTranslation(SearchScreen()));
               },
               icon: Icon(
                 Icons.search_rounded,
@@ -144,8 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               Navigator.push(
                                   context,
-                                  _categoryScreenRouteTranslation(
-                                      categoriesName[index]));
+                                  screenRouteTranslation(
+                                      CategoriesScreen(categoriesName[index])));
                             },
                             child: Container(
                               margin: EdgeInsets.all(10),
@@ -173,16 +175,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         ]);
                       })),
-              SplashScreen.nearestStoreList.isNotEmpty
-                  ? Container(
-                      margin: EdgeInsets.only(top: 20, left: 20),
-                      child: Text(
-                        "Nearest Store",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  : Text(""),
+              Container(
+                margin: EdgeInsets.only(top: 20, left: 20),
+                child: Text(
+                  "Nearest Store",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
               SplashScreen.nearestStoreList.isNotEmpty
                   ? Container(
                       height: 200,
@@ -196,7 +195,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     )
-                  : Text(''),
+                  : Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                      decoration: BoxDecoration(
+                          color: mainColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Sorry, We could not found any nearest store from your location.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                            softWrap: true,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.push(context,
+                                      screenRouteTranslation(SearchScreen()));
+                                },
+                                icon: Icon(Icons.search_rounded),
+                                label: Text("Search store")),
+                          )
+                        ],
+                      ),
+                    ),
               SplashScreen.products.isNotEmpty
                   ? Container(
                       margin:
@@ -238,42 +265,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }
-
-  Route _searchRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => SearchScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
-  }
-
-  Route _categoryScreenRouteTranslation(String name) {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            CategoriesScreen(name),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

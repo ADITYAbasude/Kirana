@@ -5,11 +5,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/constants/ConstantValue.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 class BuyProductWidget extends StatefulWidget {
   final controller;
   final productData;
-  BuyProductWidget(this.controller, this.productData);
+  Function updateProductStockCallback;
+  BuyProductWidget(
+      this.controller, this.productData, this.updateProductStockCallback);
 
   @override
   State<BuyProductWidget> createState() => _BuyProductWidgetState();
@@ -201,6 +204,12 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
               ),
             ),
             Container(
+                child: Text(
+              'You have to pay : ₹${widget.productData['product_price']}',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            )),
+            Container(
               margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               height: 45,
               child: ElevatedButton.icon(
@@ -215,7 +224,21 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () {
+                    // StripePayment.paymentRequestWithCardForm(
+                    //         CardFormPaymentRequest())
+                    //     .then((paymentMethod) {
+                    //   _scaffoldKey.currentState!.showSnackBar(SnackBar(
+                    //     content: Text('Received ${paymentMethod.id}'),
+                    //     duration: const Duration(seconds: 5),
+                    //   ));
+                    //   setState(() {
+                    //     _paymentType = paymentMethod.id.toString();
+                    //   });
+                    // }).catchError(setError);
+
+                    CardField();
                     _orderProduct();
+                    // initPaymentSheet();
                   },
                   label: Text(
                     _paymentMethods == PaymentMethods.Online ? "Pay" : 'Order',
@@ -249,6 +272,11 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
     if (_addressController.text.isNotEmpty) {
       _totalOrdersOfProduct++;
 
+      //* update the product stock after the user purchase the product
+      int productStockUpdate = widget.productData['product_unit'] == '/ 500 g'
+          ? widget.productData['product_stock'] - 500
+          : widget.productData['product_stock'] - 1;
+
       DatabaseReference dbRef =
           FirebaseDatabase.instance.ref('users/$uid/order').push();
 
@@ -262,18 +290,51 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
         'order_id': pushKey,
         'payment_method': _paymentType.substring(15).toString(),
         'product_quantity': 1,
-        'product_price': widget.productData['product_price']
+        'product_price': widget.productData['product_price'],
+        'customer_id': uid
       };
 
-      await dbRef.set(orderObject).then((value) async {
-        await FirebaseDatabase.instance
-            .ref(
-                'sellers/${widget.productData['seller_id']}/products/${widget.productData['product_id']}/info')
-            .update({'total_orders': _totalOrdersOfProduct});
-        showSnackBar(context, 'Order placed successfully');
+      await FirebaseDatabase.instance
+          .ref('sellers/${widget.productData['seller_id']}/orders/$pushKey')
+          .set(orderObject)
+          .whenComplete(() async {
+        await dbRef.set(orderObject).then((value) async {
+          await FirebaseDatabase.instance
+              .ref(
+                  'sellers/${widget.productData['seller_id']}/products/${widget.productData['product_id']}/info')
+              .update({
+            'total_orders': _totalOrdersOfProduct,
+            'product_stock': productStockUpdate
+          }).whenComplete(() {});
+          showSnackBar(context, 'Order placed successfully');
+        });
       });
     } else {
       showSnackBar(context, 'Fill your address field');
+    }
+  }
+
+  initPaymentSheet() async {
+    try {
+      await Stripe.instance
+          .createPaymentMethod(
+              params: PaymentMethodParams.cashAppPay(
+                  paymentMethodData: PaymentMethodData(
+                      shippingDetails: ShippingDetails(
+                          address: Address(
+                              city: 'Bhiwandi',
+                              country: 'India',
+                              line1: 'Balaji Nagar',
+                              line2: 'Narpoli',
+                              postalCode: '421305',
+                              state: 'Maharashtra')))))
+          .then((value) {
+        print(value.paymentMethodType);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:Kirana/utils/screen_route_translation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/constants/SystemColors.dart';
@@ -5,7 +6,7 @@ import 'package:Kirana/utils/get_info.dart';
 import 'package:Kirana/utils/add_cart_functions.dart';
 
 import '../constants/ConstantValue.dart';
-import '../screens/home/product_detailed_screen.dart';
+import '../screens/home/product_detail_screen.dart';
 
 class FavoriteProductCartWidget extends StatefulWidget {
   const FavoriteProductCartWidget(this.favoriteData,
@@ -32,7 +33,8 @@ class _FavoriteProductCartWidgetState extends State<FavoriteProductCartWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, _productRouteTranslation(productinfo));
+        Navigator.push(
+            context, screenRouteTranslation(ProductDetailScreen(productinfo)));
       },
       child: Container(
         margin: const EdgeInsets.all(10),
@@ -154,24 +156,5 @@ class _FavoriteProductCartWidgetState extends State<FavoriteProductCartWidget> {
         .then((value) {
       widget.removeProductFromFavoriteListCallback(widget.index);
     });
-  }
-
-  Route _productRouteTranslation(var productData) {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ProductDetailedScreen(productData),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

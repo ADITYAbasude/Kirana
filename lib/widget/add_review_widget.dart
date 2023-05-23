@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:Kirana/screens/home/product_detailed_screen.dart';
+import 'package:Kirana/screens/home/product_detail_screen.dart';
 import 'package:Kirana/tools/SnackBar.dart';
 import 'package:Kirana/tools/Toast.dart';
 

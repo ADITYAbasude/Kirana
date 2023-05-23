@@ -1,54 +1,51 @@
+import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/tools/Toast.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class OrderCardWidget extends StatefulWidget {
-  final orderData;
-  OrderCardWidget(this.orderData);
+import '../../utils/get_info.dart';
+
+class OrderDetailScreen extends StatefulWidget {
+  final orderId;
+  const OrderDetailScreen(this.orderId);
 
   @override
-  State<OrderCardWidget> createState() => _OrderCardWidgetState();
+  _OrderDetailScreenState createState() => _OrderDetailScreenState();
 }
 
-class _OrderCardWidgetState extends State<OrderCardWidget> {
+class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  var orderInfo;
   var productInfo;
+
   @override
   void initState() {
-    _getProductInfo();
     super.initState();
+    _getOrderInfo();
   }
 
-  double _containerHeight = 110;
-
+  late DateTime date;
   @override
   Widget build(BuildContext context) {
-    final date = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(widget.orderData['order_date'].toString()));
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.all(5),
-      padding: const EdgeInsets.all(5),
-      width: double.infinity,
-      height: _containerHeight,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.grey[100],
-          boxShadow: [
-            BoxShadow(
-              color: Color.fromARGB(136, 0, 0, 0).withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 10,
-              offset: const Offset(1, 1), // changes position of shadow
-            ),
-          ]),
-      child: Stack(
-        children: [
-          Column(
+    return Scaffold(
+        appBar: AppBar(
+          surfaceTintColor: mainColor,
+          // backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back_ios_new_rounded)),
+        ),
+        body: Container(
+          padding: const EdgeInsets.all(10),
+          child: Column(
             children: [
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
                     width: 100,
                     height: 100,
                     alignment: Alignment.center,
@@ -56,7 +53,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.green.shade100),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(500),
+                      borderRadius: BorderRadius.circular(10),
                       child: productInfo != null
                           ? Image.network(
                               productInfo['product_image'],
@@ -79,8 +76,8 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            productInfo != null
-                                ? 'Order #' + widget.orderData['order_id']
+                            orderInfo != null
+                                ? 'Order #' + orderInfo['order_id']
                                 : '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -107,7 +104,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                               children: [
                                 Text(
                                   productInfo != null
-                                      ? 'Quantity ${widget.orderData['product_quantity']}'
+                                      ? 'Quantity ${orderInfo['product_quantity']}'
                                       : '',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -117,7 +114,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                                 ),
                                 Text(
                                   productInfo != null
-                                      ? 'Price ₹${widget.orderData['product_price']}'
+                                      ? 'Price ₹${orderInfo['product_price']}'
                                       : '',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -136,29 +133,29 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
               )
             ],
           ),
-          // Positioned(
-          //   child: IconButton(
-          //       onPressed: () {
-          //         setState(() {
-          //           _containerHeight == 110
-          //               ? _containerHeight = 200
-          //               : _containerHeight = 110;
-          //         });
-          //       },
-          //       icon: Icon(_containerHeight == 110
-          //           ? Icons.arrow_drop_down_rounded
-          //           : Icons.arrow_drop_up_rounded)),
-          //   right: 0,
-          // )
-        ],
-      ),
-    );
+        ));
   }
 
-  void _getProductInfo() async {
+  _getOrderInfo() async {
+    await FirebaseDatabase.instance
+        .ref('users/$uid/order/${widget.orderId}')
+        .get()
+        .then((value) {
+      if (value.exists) {
+        setState(() {
+          orderInfo = value.value as Map;
+          date = DateTime.fromMillisecondsSinceEpoch(
+              int.parse(orderInfo['order_date'].toString()));
+        });
+        _getProductInfo();
+      }
+    });
+  }
+
+  _getProductInfo() async {
     await FirebaseDatabase.instance
         .ref(
-            'sellers/${widget.orderData['seller_id']}/products/${widget.orderData['product_id']}/info')
+            'sellers/${orderInfo['seller_id']}/products/${orderInfo['product_id']}/info')
         .get()
         .then((value) {
       if (value.exists) {

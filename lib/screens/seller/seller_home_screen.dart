@@ -1,17 +1,23 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names
 
-/* 
-This file is created by Aditya
-copyright year 2022
-*/
+//* This file is created by Aditya
+//* copyright year 2022
 
+import 'dart:async';
+import 'dart:math';
+
+import 'package:Kirana/constants/ConstantValue.dart';
 import 'package:Kirana/constants/SystemColors.dart';
+import 'package:Kirana/screens/seller/store_analytics.dart';
+import 'package:Kirana/tools/Toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:Kirana/screens/main_screen.dart';
 import 'package:Kirana/screens/seller/seller_product_detailed_screen.dart';
 import 'package:Kirana/widget/product_manage_widget.dart';
+
+import '../../utils/get_info.dart';
+import '../../utils/screen_route_translation.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({Key? key}) : super(key: key);
@@ -21,15 +27,11 @@ class SellerHomeScreen extends StatefulWidget {
   State<SellerHomeScreen> createState() => _SellerHomeScreen();
 }
 
-// bool for textfield error
-// bool _productNameError = false;
-// bool _productPriceError = false;
-
 // uid of user
 final _uid = FirebaseAuth.instance.currentUser!.uid;
 
 class _SellerHomeScreen extends State<SellerHomeScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   @override
   void initState() {
@@ -45,7 +47,18 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
     final double itemWidth = size.width / 2;
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2.5;
     return Scaffold(
-        key: _scaffoldKey,
+        key: _key,
+        endDrawer: Drawer(
+            width: getScreenSize(context).width * 0.6,
+            surfaceTintColor: mainColor,
+            child: ListView(
+              physics: const ClampingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+              children: [
+                _ListTileItem(
+                    Icons.analytics_rounded, 'Analytics', StoreAnalytics()),
+              ],
+            )),
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,
@@ -55,11 +68,14 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
           ),
           actions: [
             IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.account_circle_outlined,
-                  color: Colors.white,
-                ))
+              onPressed: () {
+                _key.currentState!.openEndDrawer();
+              },
+              icon: Icon(
+                Icons.menu_rounded,
+                color: Colors.white,
+              ),
+            ),
           ],
           leading: IconButton(
               onPressed: (() {
@@ -115,7 +131,9 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                   onTap: () {
                                     SellerProductDetailedScreen.index = index;
                                     Navigator.push(
-                                        context, _productRouteTranslation());
+                                        context,
+                                        screenRouteTranslation(
+                                            SellerProductDetailedScreen()));
                                   },
                                   child: Column(
                                     children: [
@@ -154,7 +172,8 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                                               ),
                                               Text(
                                                 SellerHomeScreen.products[index]
-                                                    ['product_price'],
+                                                        ['product_price']
+                                                    .toString(),
                                               ),
                                               Text(SellerHomeScreen
                                                       .products[index]
@@ -243,22 +262,18 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
     });
   }
 
-  Route _productRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            SellerProductDetailedScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.easeInOut;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
+  Widget _ListTileItem(IconData icon, String title, Widget screen) {
+    return ListTile(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      leading: Icon(
+        icon,
+        color: Colors.black,
+      ),
+      title: Text(title, style: TextStyle(color: Colors.black, fontSize: 18)),
+      onTap: () {
+        _key.currentState!.closeEndDrawer();
+        Navigator.push(context, screenRouteTranslation(screen));
+      },
+    );
   }
 }

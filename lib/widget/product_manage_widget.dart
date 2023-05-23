@@ -68,13 +68,15 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
           .products[SellerProductDetailedScreen.index!]['product_name'];
 
       _productPriceController.text = SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]['product_price'];
+          .products[SellerProductDetailedScreen.index!]['product_price']
+          .toString();
 
       _productDescriptionController.text = SellerHomeScreen
           .products[SellerProductDetailedScreen.index!]['product_description'];
 
       _productStockController.text = SellerHomeScreen
-          .products[SellerProductDetailedScreen.index!]['product_stock'];
+          .products[SellerProductDetailedScreen.index!]['product_stock']
+          .toString();
 
       _image = SellerHomeScreen.products[SellerProductDetailedScreen.index!]
           ['product_image'];
@@ -138,8 +140,8 @@ class _ProductManageWidgetState extends State<ProductManageWidget> {
               : _image,
           'product_name': _productNameController.text,
           'product_description': _productDescriptionController.text,
-          'product_stock': _productStockController.text,
-          'product_price': _productPriceController.text,
+          'product_stock': int.parse(_productStockController.text),
+          'product_price': int.parse(_productPriceController.text),
           'product_criteria': _productCriteria,
           'product_unit': unitsCriteriaData,
           'product_id': pushId,

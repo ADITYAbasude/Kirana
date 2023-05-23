@@ -1,9 +1,11 @@
+import 'package:Kirana/utils/screen_route_translation.dart';
 import 'package:Kirana/widget/order_card_widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/SystemColors.dart';
 import '../../utils/get_info.dart';
+import 'order_detail_screen.dart';
 
 class OrderScreen extends StatefulWidget {
   OrderScreen({Key? key}) : super(key: key);
@@ -48,7 +50,14 @@ class _OrderScreenState extends State<OrderScreen> {
                 ? ListView.builder(
                     itemCount: orderList.length,
                     itemBuilder: (context, index) {
-                      return OrderCardWidget(orderList[index]);
+                      return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                screenRouteTranslation(OrderDetailScreen(
+                                    orderList[index]['order_id'])));
+                          },
+                          child: OrderCardWidget(orderList[index]));
                     })
                 : Center(
                     child: Text("No Orders Yet"),
@@ -63,6 +72,9 @@ class _OrderScreenState extends State<OrderScreen> {
           orderList.add(data.value);
         });
       }
+      setState(() {
+        orderList = orderList.reversed.toList();
+      });
     });
   }
 }

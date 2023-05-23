@@ -1,9 +1,10 @@
+import 'package:Kirana/utils/screen_route_translation.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/utils/get_info.dart';
 
 import '../constants/ConstantValue.dart';
-import '../screens/home/product_detailed_screen.dart';
+import '../screens/home/product_detail_screen.dart';
 
 class CartWidget extends StatefulWidget {
   final cart;
@@ -37,7 +38,8 @@ class _CartWidgetState extends State<CartWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, _productRouteTranslation(productinfo));
+        Navigator.push(
+            context, screenRouteTranslation(ProductDetailScreen(productinfo)));
       },
       child: Container(
         margin: const EdgeInsets.all(10),
@@ -200,7 +202,8 @@ class _CartWidgetState extends State<CartWidget> {
         setState(() {
           productinfo = value.value as Map;
           widget.updateSubTotalPriceCallback(
-              double.parse(productinfo['product_price']), widget.index);
+              double.parse(productinfo['product_price'].toString()),
+              widget.index);
           if (productinfo['product_unit'] == '/ 1 pc') {
             unit = '1 pc';
           } else {
@@ -227,24 +230,5 @@ class _CartWidgetState extends State<CartWidget> {
       print(widget.index);
       widget.removeProductFromCartListCallback(widget.index);
     });
-  }
-
-  Route _productRouteTranslation(var productData) {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ProductDetailedScreen(productData),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

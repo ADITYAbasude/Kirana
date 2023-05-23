@@ -1,5 +1,6 @@
+import 'package:Kirana/utils/screen_route_translation.dart';
 import 'package:flutter/material.dart';
-import 'package:Kirana/screens/home/product_detailed_screen.dart';
+import 'package:Kirana/screens/home/product_detail_screen.dart';
 
 class ProductCardWidget extends StatefulWidget {
   ProductCardWidget(this.productData);
@@ -32,7 +33,9 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           body: InkWell(
             onTap: () {
               Navigator.push(
-                  context, _productRouteTranslation(widget.productData));
+                  context,
+                  screenRouteTranslation(
+                      ProductDetailScreen(widget.productData)));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +81,8 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                           const Icon(Icons.currency_rupee_rounded),
                           Container(
                             child: Text(
-                                widget.productData['product_price'] + " ",
+                                widget.productData['product_price'].toString() +
+                                    " ",
                                 style: const TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w600)),
                           ),
@@ -102,24 +106,5 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           // floatingActionButtonLocation:
           //     FloatingActionButtonLocation.miniEndFloat,
         ));
-  }
-
-  Route _productRouteTranslation(var productData) {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ProductDetailedScreen(productData),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

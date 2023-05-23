@@ -13,6 +13,8 @@ import 'package:Kirana/screens/seller/seller_home_screen.dart';
 import 'package:Kirana/tools/Toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../utils/screen_route_translation.dart';
+
 class SellerScreen extends StatefulWidget {
   SellerScreen({Key? key}) : super(key: key);
 
@@ -75,7 +77,8 @@ class _SellerScreenState extends State<SellerScreen> {
                                     builder: ((context) =>
                                         SellerHomeScreen())));
                           } else {
-                            Navigator.of(context).push(RouteTranslation());
+                            Navigator.of(context).push(screenRouteTranslation(
+                                AddSellerDetailScreen()));
                           }
                         },
                         style: OutlinedButton.styleFrom(
@@ -89,25 +92,6 @@ class _SellerScreenState extends State<SellerScreen> {
             ),
           ],
         ));
-  }
-
-  Route RouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            AddSellerDetailScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 
   _checkSellerIsExistOrNot() async {

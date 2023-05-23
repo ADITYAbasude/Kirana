@@ -14,6 +14,7 @@ import 'package:Kirana/screens/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/get_info.dart';
+import '../../utils/screen_route_translation.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);
@@ -156,27 +157,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       switch (index) {
                         case 0:
                           Navigator.of(context)
-                              .push(_myProfileRouteTranslation());
+                              .push(screenRouteTranslation(MyProfileScreen()));
                           break;
                         case 1:
                           Navigator.of(context)
-                              .push(_sellerStoreRouteTranslation());
+                              .push(screenRouteTranslation(SellerScreen()));
                           break;
                         case 2:
                           Navigator.of(context)
-                              .push(_myAddressRouteTranslation());
+                              .push(screenRouteTranslation(MyAddressScreen()));
                           break;
                         case 3:
                           Navigator.of(context)
-                              .push(_myOrderRouteTranslation());
+                              .push(screenRouteTranslation(OrderScreen()));
                           break;
                         case 4:
-                          Navigator.of(context)
-                              .push(_myNotificationRouteTranslation());
+                          Navigator.of(context).push(
+                              screenRouteTranslation(NotificationScreen()));
                           break;
                         case 5:
                           Navigator.of(context)
-                              .push(_myProfileRouteTranslation());
+                              .push(screenRouteTranslation(MyProfileScreen()));
                           break;
                         case 6:
                           logOut(context);
@@ -231,117 +232,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
           MaterialPageRoute(builder: (context) => SplashScreen()),
           ModalRoute.withName('/'));
     });
-  }
-
-  Route _myProfileRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const MyProfileScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
-  }
-
-  Route _sellerStoreRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => SellerScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
-  }
-
-  Route _myOrderRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => OrderScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
-  }
-
-  Route _myAddressRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const MyAddressScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
-  }
-
-  Route _myNotificationRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const NotificationScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
-  }
-
-  Route _myFavoritesRouteTranslation() {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const MyFavoritesScreen(),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

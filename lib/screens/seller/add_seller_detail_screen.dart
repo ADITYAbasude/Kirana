@@ -441,7 +441,9 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
         'seller_id': uid,
         "seller_name": username['name'],
         'lat': coordinate[0].coordinates.latitude.toString(),
-        'lng': coordinate[0].coordinates.longitude.toString()
+        'lng': coordinate[0].coordinates.longitude.toString(),
+        'account_created_date':
+            DateTime.now().millisecondsSinceEpoch.toString(),
       };
 
       _dbRef.child('$uid/info').set(dataObject).whenComplete(() async {

@@ -3,12 +3,17 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'constants/SystemColors.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dotenv.load(fileName: 'lib/.env');
+  Stripe.publishableKey = dotenv.get("stripe_pay_publishable_key");
+  Stripe.instance.applySettings();
   runApp(MyApp());
 }
 
@@ -33,6 +38,10 @@ class MyApp extends StatelessWidget {
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: mainColor,
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                surfaceTintColor:
+                    MaterialStateColor.resolveWith((states) => mainColor))),
         dividerColor: Colors.black.withOpacity(0),
         appBarTheme: AppBarTheme(backgroundColor: mainColor),
         useMaterial3: true,

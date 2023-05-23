@@ -1,4 +1,0 @@
-some new features i have to add in future or after the some time.
-
-That features are:
-1). custom alert/toast  

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:Kirana/utils/screen_route_translation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:Kirana/utils/add_cart_functions.dart';
 
 import '../constants/ConstantValue.dart';
-import '../screens/home/product_detailed_screen.dart';
+import '../screens/home/product_detail_screen.dart';
 
 class StoreProductsCartWidget extends StatelessWidget {
   final productInfo;
@@ -20,7 +21,8 @@ class StoreProductsCartWidget extends StatelessWidget {
       child: Scaffold(
         body: GestureDetector(
           onTap: () {
-            Navigator.push(context, _productRouteTranslation(productInfo));
+            Navigator.push(context,
+                screenRouteTranslation(ProductDetailScreen(productInfo)));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -133,24 +135,5 @@ class StoreProductsCartWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Route _productRouteTranslation(var productData) {
-    return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ProductDetailedScreen(productData),
-        transitionsBuilder: ((context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset(0.0, 0.0);
-          const curve = Curves.fastOutSlowIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }));
   }
 }

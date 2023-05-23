@@ -23,8 +23,8 @@ class _SellerProductDetailedScreenState
   String stock = SellerHomeScreen.products[SellerProductDetailedScreen.index!]
               ['product_unit'] ==
           '/ 500 g'
-      ? (int.parse(SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-                  ['product_stock']) /
+      ? (SellerHomeScreen.products[SellerProductDetailedScreen.index!]
+                  ['product_stock'] /
               1000)
           .toString()
       : SellerHomeScreen.products[SellerProductDetailedScreen.index!]

@@ -3,6 +3,8 @@
 //*  This file is created by Aditya */
 //*  copyright year 2022 */
 
+import 'dart:async';
+
 import 'package:Kirana/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -17,17 +19,17 @@ import 'package:Kirana/widget/review_card_widget.dart';
 
 import '../../utils/get_info.dart';
 
-class ProductDetailedScreen extends StatefulWidget {
-  ProductDetailedScreen(this.productData);
+class ProductDetailScreen extends StatefulWidget {
+  ProductDetailScreen(this.productData);
   final productData;
   static List allReviews = [];
   @override
-  _ProductDetailedScreenState createState() => _ProductDetailedScreenState();
+  _ProductDetailScreenState createState() => _ProductDetailScreenState();
 }
 
 ScrollController? _controller;
 
-class _ProductDetailedScreenState extends State<ProductDetailedScreen>
+class _ProductDetailScreenState extends State<ProductDetailScreen>
     with SingleTickerProviderStateMixin {
   //tab controller
   TabController? _tabController;
@@ -48,13 +50,15 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
   // product unit
   String unit = '';
 
+  Timer? timer;
+
   // when user added a review then this callback will update the frontend of this screen
   reviewCallBack(var review, int ratingByUser) {
     setState(() {
       widget.productData['rating'] += ratingByUser;
-      ProductDetailedScreen.allReviews.add(review);
-      _rating = widget.productData['rating'] /
-          ProductDetailedScreen.allReviews.length;
+      ProductDetailScreen.allReviews.add(review);
+      _rating =
+          widget.productData['rating'] / ProductDetailScreen.allReviews.length;
     });
   }
 
@@ -64,11 +68,21 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
     });
   }
 
+  updateProductStockCallback(int stock) {
+    setState(() {
+      productStock = stock.toDouble();
+    });
+  }
+
   @override
   void initState() {
+    timer = Timer.periodic(Duration(seconds: 2), (Timer t) {
+      _updateProductDetails();
+    });
+
     _checkFavoriteStatus(widget.productData);
     _getNumbersOfReviews(widget.productData);
-    productStock = double.parse(widget.productData['product_stock']);
+    productStock = double.parse(widget.productData['product_stock'].toString());
     unit = widget.productData['product_unit'] == '/ 1 pc' ? 'pc' : 'g';
     if (unit == 'pc' && productStock > 0) {
       setState(() {
@@ -169,7 +183,8 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                                   size: 20,
                                 ),
                                 Text(
-                                  widget.productData['product_price'],
+                                  widget.productData['product_price']
+                                      .toString(),
                                   style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400),
@@ -210,7 +225,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                           color: Colors.yellow[800],
                         )),
                 Text(
-                  ' (${ProductDetailedScreen.allReviews.length} reviews)',
+                  ' (${ProductDetailScreen.allReviews.length} reviews)',
                   style: TextStyle(color: Colors.black.withOpacity(0.5)),
                 ),
               ],
@@ -323,7 +338,9 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
                                 return StatefulBuilder(
                                   builder: (BuildContext context, setState) {
                                     return BuyProductWidget(
-                                        controller, widget.productData);
+                                        controller,
+                                        widget.productData,
+                                        updateProductStockCallback);
                                   },
                                 );
                               },
@@ -344,7 +361,7 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
 
 // get number of users that given a reviews
   void _getNumbersOfReviews(var productData) async {
-    ProductDetailedScreen.allReviews.clear();
+    ProductDetailScreen.allReviews.clear();
 
     await FirebaseDatabase.instance
         .ref(
@@ -354,14 +371,14 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
       if (value.exists) {
         for (var review in value.children) {
           setState(() {
-            ProductDetailedScreen.allReviews.add(review.value);
+            ProductDetailScreen.allReviews.add(review.value);
           });
         }
-        if (ProductDetailedScreen.allReviews.isNotEmpty) {
+        if (ProductDetailScreen.allReviews.isNotEmpty) {
           setState(() {
-            ProductDetailedScreen.allReviews.reversed;
+            ProductDetailScreen.allReviews.reversed;
             _rating = widget.productData['rating'] /
-                ProductDetailedScreen.allReviews.length;
+                ProductDetailScreen.allReviews.length;
           });
         }
       }
@@ -413,6 +430,28 @@ class _ProductDetailedScreenState extends State<ProductDetailedScreen>
         });
       }
     });
+  }
+
+  void _updateProductDetails() {
+    FirebaseDatabase.instance
+        .ref(
+            'sellers/${widget.productData['seller_id']}/products/${widget.productData['product_id']}/info')
+        .get()
+        .then((value) {
+      var data = value.value as Map;
+      if (mounted) {
+        setState(() {
+          widget.productData['product_stock'] = data['product_stock'];
+          widget.productData['product_price'] = data['product_price'];
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    timer!.cancel();
+    super.dispose();
   }
 }
 
@@ -522,11 +561,11 @@ class _ReviewTabViewWidgetState extends State<ReviewTabViewWidget> {
             child: ListView.builder(
                 controller: _controller,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: ProductDetailedScreen.allReviews.length,
+                itemCount: ProductDetailScreen.allReviews.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ReviewCardWidget(
-                      ProductDetailedScreen.allReviews[index]);
+                      ProductDetailScreen.allReviews[index]);
                 }),
           )
         ],
