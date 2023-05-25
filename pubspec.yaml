@@ -60,6 +60,7 @@ dependencies:
   syncfusion_flutter_charts: ^21.2.3
   flutter_stripe: ^9.2.0
   flutter_dotenv: ^5.0.2
+  timeline_tile: ^2.0.0
 
 dev_dependencies:
   flutter_test:

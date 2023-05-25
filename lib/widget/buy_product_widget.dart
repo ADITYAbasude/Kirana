@@ -33,6 +33,8 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
 
   late int _totalOrdersOfProduct;
 
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   @override
   void initState() {
     _time = Time(hour: _currentTime.hour, minute: _currentTime.minute);
@@ -286,12 +288,15 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
         'product_id': widget.productData['product_id'],
         'seller_id': widget.productData['seller_id'],
         'order_date': _currentTime.millisecondsSinceEpoch.toString(),
-        'schedule_time': _scheduleTime,
+        'schedule_time': _scheduleAnswer == timeScheduleAnswer.no
+            ? DateTime.now().millisecondsSinceEpoch.toString()
+            : _scheduleAnswer,
         'order_id': pushKey,
         'payment_method': _paymentType.substring(15).toString(),
         'product_quantity': 1,
         'product_price': widget.productData['product_price'],
-        'customer_id': uid
+        'customer_id': uid,
+        'customer_address': _addressController.text,
       };
 
       await FirebaseDatabase.instance
@@ -306,6 +311,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
             'total_orders': _totalOrdersOfProduct,
             'product_stock': productStockUpdate
           }).whenComplete(() {});
+          // Scaffold
           showSnackBar(context, 'Order placed successfully');
         });
       });

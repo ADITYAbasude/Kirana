@@ -48,7 +48,6 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
                     width: 100,
                     height: 100,
                     alignment: Alignment.center,
@@ -56,7 +55,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.green.shade100),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(500),
+                      borderRadius: BorderRadius.circular(10),
                       child: productInfo != null
                           ? Image.network(
                               productInfo['product_image'],
@@ -136,20 +135,6 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
               )
             ],
           ),
-          // Positioned(
-          //   child: IconButton(
-          //       onPressed: () {
-          //         setState(() {
-          //           _containerHeight == 110
-          //               ? _containerHeight = 200
-          //               : _containerHeight = 110;
-          //         });
-          //       },
-          //       icon: Icon(_containerHeight == 110
-          //           ? Icons.arrow_drop_down_rounded
-          //           : Icons.arrow_drop_up_rounded)),
-          //   right: 0,
-          // )
         ],
       ),
     );

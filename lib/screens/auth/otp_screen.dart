@@ -5,6 +5,7 @@ This file is created by Aditya
 copyright year 2022
 */
 
+import 'package:Kirana/constants/SystemColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,13 @@ class OTPScreen extends StatefulWidget {
   State<OTPScreen> createState() => _OTPScreenState();
 }
 
-bool _showProgressBar = false;
-
 class _OTPScreenState extends State<OTPScreen> {
   // late CollectionReference ref;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   String? _smsCode;
+
+  bool _showProgressBar = false;
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _OTPScreenState extends State<OTPScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: mainColor,
           elevation: 2,
           centerTitle: true,
           leading: IconButton(
@@ -91,7 +92,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   margin: const EdgeInsets.only(top: 50, left: 50, right: 50),
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundColor: mainColor,
                           padding: EdgeInsets.all(10),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30))),
@@ -107,15 +108,9 @@ class _OTPScreenState extends State<OTPScreen> {
           Center(
               child: Visibility(
                   visible: _showProgressBar,
-                  child: Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        alignment: Alignment.center,
-                        child: Loading(),
-                      ))))
+                  child: Container(
+                    child: Loading(),
+                  )))
         ]));
   }
 
@@ -124,7 +119,9 @@ class _OTPScreenState extends State<OTPScreen> {
 not, if not then it will stop the login process else it will continue the login process/execution
 */
   Future<void> _verifyPhoneNumber() async {
-    _showProgressBar = true;
+    setState(() {
+      _showProgressBar = true;
+    });
     Map<String, dynamic> userDate = {
       'name': LoginSignUpScreen.username,
       'phone_number': LoginSignUpScreen.phoneNumber
@@ -142,12 +139,16 @@ not, if not then it will stop the login process else it will continue the login 
           .child('info')
           .set(userDate)
           .whenComplete(() {
-        _showProgressBar = false;
+        setState(() {
+          _showProgressBar = false;
+        });
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SplashScreen()));
       });
     }).onError((error, stackTrace) {
-      _showProgressBar = false;
+      setState(() {
+        _showProgressBar = false;
+      });
     });
   }
 }

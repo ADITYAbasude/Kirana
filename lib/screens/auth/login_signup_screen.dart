@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_is_not_empty
 
-/*
+/* 
   This file is created by Aditya
 copyright year 2022
 
@@ -51,9 +51,17 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                       alignment: Alignment.center,
                       child: const Image(
                           image: AssetImage("assets/images/attraction.jpg"))),
+                  // Container(
+                  //   child: Text(
+                  //     'A whole grocery store at your fingertips',
+                  //     style:
+                  //         TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  //     textAlign: TextAlign.center,
+                  //   ),
+                  // ),
                   Container(
-                    margin:
-                        const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                    margin: const EdgeInsets.only(
+                        left: 5, right: 5, bottom: 10, top: 10),
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
                         color: Colors.black,
@@ -172,7 +180,9 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
                                 ),
                                 child: const Text(
                                   "Send OTP",
-                                  style: TextStyle(color: Colors.black),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
                                 )))
                       ],
                     ),
