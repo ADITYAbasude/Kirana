@@ -12,6 +12,12 @@
         android:name="${applicationName}"
         android:icon="@drawable/store"
         android:label="grocery_app">
+
+
+        <!-- TODO: Add your Google Maps API key here -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAvstzsJWvizPOkL6HolklC8dL0uTV7xHE"/>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

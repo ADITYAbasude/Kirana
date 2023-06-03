@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants/ConstantValue.dart';
+import '../../utils/screen_size.dart';
 import '../../constants/SystemColors.dart';
 import '../../tools/loading.dart';
 import '../../widget/product_card_widget.dart';

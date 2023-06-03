@@ -1,12 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:Kirana/screens/profile/help_center_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/screens/profile/orders_screen.dart';
 import 'package:Kirana/screens/profile/my_address_screen.dart';
-import 'package:Kirana/screens/profile/my_favorites_screen.dart';
+import 'package:Kirana/screens/favorite/my_favorites_screen.dart';
 import 'package:Kirana/screens/profile/my_profile_screen.dart';
 import 'package:Kirana/screens/profile/notification_screen.dart';
 import 'package:Kirana/screens/seller/seller_screen.dart';
@@ -177,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           break;
                         case 5:
                           Navigator.of(context)
-                              .push(screenRouteTranslation(MyProfileScreen()));
+                              .push(screenRouteTranslation(HelpCenterScreen()));
                           break;
                         case 6:
                           logOut(context);

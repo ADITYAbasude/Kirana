@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_typing_uninitialized_variables, unnecessary_null_comparison
 
 import 'dart:async';
 
@@ -24,6 +24,7 @@ class SplashScreen extends StatefulWidget {
   static List nearestStoreList = [];
   static List products = [];
   static String address = "";
+  static Position? currentLocation;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -34,7 +35,6 @@ loc.Location location = loc.Location();
 class _SplashScreenState extends State<SplashScreen> {
   User? auth = FirebaseAuth.instance.currentUser;
   var locationAccessStatus;
-  static Position? currentLocation;
 
   bool _showProgressBar = true;
 
@@ -49,17 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  callbackNearestStoreAndProductFunction() {
-    // print('callback call');
-    // if (auth != null) {
-    //   _getCurrentAddress();
-    //   _getNearestStore();
-    // } else {Y
-    //   // setState(() {
-    //   //   _showProgressBar = false;
-    //   // });
-    // }
-  }
+  callbackNearestStoreAndProductFunction() {}
 
   LocationAccess() async {
     locationAccessStatus = await Permission.location.status;
@@ -78,12 +68,17 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     } else {
       await GetPermissions().LocationAccessRequest().then((value) async {
+        locationAccessStatus = await Permission.location.status;
         if (await locationAccessStatus == PermissionStatus.granted) {
           await GetPermissions().RequestGpsService().then((value) {
             print('request 2');
             if (auth != null) {
               _getCurrentAddress();
               _getNearestStore();
+            } else {
+              setState(() {
+                _showProgressBar = false;
+              });
             }
           });
         }
@@ -94,9 +89,24 @@ class _SplashScreenState extends State<SplashScreen> {
   _getCurrentAddress() async {
     if (await location.serviceEnabled() ||
         await Permission.location.status == PermissionStatus.granted) {
-      currentLocation = await UserData.locateUser();
-      await placemarkFromCoordinates(
-              currentLocation!.latitude, currentLocation!.longitude,
+      // if (SplashScreen.address != null) {
+      // var addresses = await locationFromAddress(SplashScreen.address);
+      //   var first = addresses.first;
+      //   setState(() {
+      //     SplashScreen.currentLocation = Position(
+      //         longitude: first.longitude,
+      //         latitude: first.latitude,
+      //         timestamp: DateTime.now(),
+      //         accuracy: 0.0,
+      //         altitude: 0.0,
+      //         heading: 0.0,
+      //         speed: 0.0,
+      //         speedAccuracy: 0.0);
+      //   });
+      // } else {
+      SplashScreen.currentLocation = await UserData.locateUser();
+      await placemarkFromCoordinates(SplashScreen.currentLocation!.latitude,
+              SplashScreen.currentLocation!.longitude,
               localeIdentifier: 'en')
           .then(
         (List<Placemark> placeMarks) {
@@ -107,6 +117,7 @@ class _SplashScreenState extends State<SplashScreen> {
           });
         },
       );
+      // }
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:Kirana/utils/get_info.dart';
 import 'package:Kirana/widget/favorite_product_cart_widget.dart';
 import 'package:Kirana/widget/wishlist_is_empty.dart';
 
-import '../../constants/ConstantValue.dart';
+import '../../utils/screen_size.dart';
 import '../../constants/SystemColors.dart';
 
 class MyFavoritesScreen extends StatefulWidget {

@@ -9,7 +9,7 @@ import 'package:Kirana/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/tools/SnackBar.dart';
 import 'package:Kirana/utils/add_cart_functions.dart';

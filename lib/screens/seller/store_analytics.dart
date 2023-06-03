@@ -65,35 +65,33 @@ class _StoreAnalyticsState extends State<StoreAnalytics> {
                 color: mainColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          '1.5k',
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        Text('Impression', style: TextStyle(fontSize: 16))
-                      ],
-                    ),
-                    const SizedBox(height: 50, child: VerticalDivider()),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          orders.length.toString(),
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        Text('Orders', style: TextStyle(fontSize: 16))
-                      ],
-                    )
-                  ],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '1.5k',
+                        style: TextStyle(fontSize: 24),
+                      ),
+                      Text('Impression', style: TextStyle(fontSize: 16))
+                    ],
+                  ),
+                  const SizedBox(height: 50, child: VerticalDivider()),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        orders.length.toString(),
+                        style: TextStyle(fontSize: 24),
+                      ),
+                      Text('Orders', style: TextStyle(fontSize: 16))
+                    ],
+                  )
+                ],
               ),
             ),
             Container(

@@ -59,7 +59,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           },
                           child: OrderCardWidget(orderList[index]));
                     })
-                : Center(
+                : const Center(
                     child: Text("No Orders Yet"),
                   )));
   }

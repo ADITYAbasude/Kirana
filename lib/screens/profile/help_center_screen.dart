@@ -1,19 +1,10 @@
-import 'dart:async';
-import 'dart:ffi';
+import 'package:flutter/material.dart';
 
-import 'package:Kirana/utils/screen_size.dart';
-import 'package:Kirana/tools/custom_toast.dart';
-import "package:flutter/material.dart";
-import 'package:Kirana/constants/SystemColors.dart';
+import '../../constants/SystemColors.dart';
 
-class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+class HelpCenterScreen extends StatelessWidget {
+  const HelpCenterScreen({Key? key}) : super(key: key);
 
-  @override
-  _NotificationScreenState createState() => _NotificationScreenState();
-}
-
-class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,15 +20,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Colors.white,
               )),
           title: Text(
-            "Notifications",
+            "Help center",
             style: TextStyle(color: textColor),
           ),
           centerTitle: true,
         ),
         body: Center(
           child: Text(
-            'Currently, this feature is not there in the app',
+            'If your need any help, then go to the google and search it there. 🙏',
             softWrap: true,
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
         ));

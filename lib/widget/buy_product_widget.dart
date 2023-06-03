@@ -1,10 +1,12 @@
 import 'package:Kirana/tools/SnackBar.dart';
 import 'package:Kirana/utils/get_info.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
 class BuyProductWidget extends StatefulWidget {
@@ -33,6 +35,8 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
 
   late int _totalOrdersOfProduct;
 
+  BillingDetails? _billingDetails;
+
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   @override
@@ -54,7 +58,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(0, 0, 0, 0),
+      backgroundColor: const Color.fromARGB(0, 0, 0, 0),
       body: Container(
         width: getScreenSize(context).width,
         height: getScreenSize(context).height,
@@ -225,22 +229,26 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                     elevation: 0,
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  onPressed: () {
-                    // StripePayment.paymentRequestWithCardForm(
-                    //         CardFormPaymentRequest())
-                    //     .then((paymentMethod) {
-                    //   _scaffoldKey.currentState!.showSnackBar(SnackBar(
-                    //     content: Text('Received ${paymentMethod.id}'),
-                    //     duration: const Duration(seconds: 5),
-                    //   ));
-                    //   setState(() {
-                    //     _paymentType = paymentMethod.id.toString();
-                    //   });
-                    // }).catchError(setError);
+                  onPressed: () async {
+                    var paymentIntent = await createPaymentIntent(34, 'INR');
+                    var paymentSheet = await Stripe.instance.initPaymentSheet(
+                        paymentSheetParameters: SetupPaymentSheetParameters(
+                      // Main params
+                      paymentIntentClientSecret: paymentIntent['client_secret'],
+                      merchantDisplayName: 'Kirana',
+                      // Customer params
+                      customerId: uid,
+                      googlePay: PaymentSheetGooglePay(
+                        merchantCountryCode: 'DE',
+                        testEnv: true,
+                      ),
+                      style: ThemeMode.light,
+                      billingDetails: _billingDetails,
+                    ));
 
-                    CardField();
-                    _orderProduct();
-                    // initPaymentSheet();
+                    await Stripe.instance.presentPaymentSheet().then((value) {
+                      _orderProduct();
+                    }).onError((error, stackTrace) {});
                   },
                   label: Text(
                     _paymentMethods == PaymentMethods.Online ? "Pay" : 'Order',
@@ -267,7 +275,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
   }
 
   getAddress() async {
-    _addressController.text = await SplashScreen.address;
+    _addressController.text = SplashScreen.address;
   }
 
   _orderProduct() async {
@@ -320,27 +328,19 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
     }
   }
 
-  initPaymentSheet() async {
+  dynamic createPaymentIntent(int amount, String currency) async {
+    final dio = Dio();
     try {
-      await Stripe.instance
-          .createPaymentMethod(
-              params: PaymentMethodParams.cashAppPay(
-                  paymentMethodData: PaymentMethodData(
-                      shippingDetails: ShippingDetails(
-                          address: Address(
-                              city: 'Bhiwandi',
-                              country: 'India',
-                              line1: 'Balaji Nagar',
-                              line2: 'Narpoli',
-                              postalCode: '421305',
-                              state: 'Maharashtra')))))
-          .then((value) {
-        print(value.paymentMethodType);
-      });
+      var response = await dio.post("https://api.stripe.com/v1/payment_intents",
+          options: Options(headers: {
+            'Authorization':
+                'Bearer sk_test_51N01KGSGkthyrkckIaXtj0BAOFMQe1mdfW7jYqGNbYNKcSEM87EofN4uM1MYgcNU7gzS4BCN8SuSQx4gBDfrMVMI00nCBT7bRM',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }),
+          queryParameters: {'amount': 1000, 'currency': currency});
+      return response.data;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      print(e);
     }
   }
 }

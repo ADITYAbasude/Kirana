@@ -13,6 +13,7 @@ Future main() async {
   await Firebase.initializeApp();
   await dotenv.load(fileName: 'lib/.env');
   Stripe.publishableKey = dotenv.get("stripe_pay_publishable_key");
+  Stripe.stripeAccountId = 'acct_1N01KGSGkthyrkck';
   Stripe.instance.applySettings();
   runApp(MyApp());
 }

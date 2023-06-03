@@ -1,13 +1,11 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/utils/screen_route_translation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:Kirana/utils/add_cart_functions.dart';
 
-import '../constants/ConstantValue.dart';
+import '../utils/screen_size.dart';
 import '../screens/home/product_detail_screen.dart';
 
 class StoreProductsCartWidget extends StatelessWidget {
@@ -26,26 +24,18 @@ class StoreProductsCartWidget extends StatelessWidget {
           },
           child: Container(
             margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                      blurRadius: 10,
-                      spreadRadius: 0,
-                      color: Color.fromARGB(78, 0, 0, 0),
-                      offset: Offset(0, 0))
-                ]),
+              color: mainColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
             width: getScreenSize(context).width,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
                     child: productInfo != null
                         ? Image.network(
                             productInfo['product_image'],

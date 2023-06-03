@@ -110,15 +110,6 @@ class _SellerProductDetailedScreenState
               const Divider(
                 color: Colors.black26,
               ),
-              //product analysis
-              ////TODO: for future use
-              // Container(
-              //   margin: const EdgeInsets.only(top: 25),
-              //   child: const Text(
-              //     "Product analysis",
-              //     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-              //   ),
-              // )
             ],
           ),
         ),
@@ -152,19 +143,22 @@ class _SellerProductDetailedScreenState
             },
             child: const Icon(Icons.edit_rounded),
           ),
-          FloatingActionButton.small(
-            heroTag: SellerProductDetailedScreen.index,
-            onPressed: () {
-              FirebaseDatabase.instance
-                  .ref(
-                      'sellers/$uid/products/${SellerHomeScreen.products[SellerProductDetailedScreen.index!]['product_id']}')
-                  .remove()
-                  .whenComplete(() {
-                Navigator.pop(context);
-              });
-            },
-            child: Icon(Icons.delete_outline),
-          )
+
+          //? here, we not give a delete option to seller, if seller want to remove specific product then he/she can change the stock to 0
+
+          // FloatingActionButton.small(
+          //   heroTag: SellerProductDetailedScreen.index,
+          //   onPressed: () {
+          //     FirebaseDatabase.instance
+          //         .ref(
+          //             'sellers/$uid/products/${SellerHomeScreen.products[SellerProductDetailedScreen.index!]['product_id']}')
+          //         .remove()
+          //         .whenComplete(() {
+          //       Navigator.pop(context);
+          //     });
+          //   },
+          //   child: Icon(Icons.delete_outline),
+          // )
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,

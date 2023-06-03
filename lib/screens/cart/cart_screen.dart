@@ -2,7 +2,7 @@
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/utils/get_info.dart';
 import 'package:Kirana/widget/cart_widget.dart';

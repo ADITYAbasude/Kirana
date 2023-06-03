@@ -3,7 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/utils/get_info.dart';
 
-import '../constants/ConstantValue.dart';
+import '../constants/SystemColors.dart';
+import '../utils/screen_size.dart';
 import '../screens/home/product_detail_screen.dart';
 
 class CartWidget extends StatefulWidget {
@@ -43,26 +44,18 @@ class _CartWidgetState extends State<CartWidget> {
       },
       child: Container(
         margin: const EdgeInsets.all(10),
-        padding: const EdgeInsets.all(0),
+        padding: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                  color: Color.fromARGB(78, 0, 0, 0),
-                  offset: Offset(0, 0))
-            ]),
+          color: mainColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
         width: getScreenSize(context).width,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    bottomLeft: Radius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
                 child: productinfo != null
                     ? Image.network(
                         productinfo['product_image'],
@@ -74,7 +67,7 @@ class _CartWidgetState extends State<CartWidget> {
             ),
             Expanded(
               child: Container(
-                margin: const EdgeInsets.only(left: 10),
+                margin: const EdgeInsets.only(left: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

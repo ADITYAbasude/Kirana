@@ -4,20 +4,18 @@
 //* copyright year 2022
 
 import 'dart:async';
-import 'dart:math';
 
-import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/screens/seller/store_analytics.dart';
-import 'package:Kirana/tools/Toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/seller/seller_product_detailed_screen.dart';
 import 'package:Kirana/widget/product_manage_widget.dart';
 
-import '../../utils/get_info.dart';
 import '../../utils/screen_route_translation.dart';
+import 'orders_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({Key? key}) : super(key: key);
@@ -49,7 +47,7 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
     return Scaffold(
         key: _key,
         endDrawer: Drawer(
-            width: getScreenSize(context).width * 0.6,
+            width: getScreenSize(context).width * 0.7,
             surfaceTintColor: mainColor,
             child: ListView(
               physics: const ClampingScrollPhysics(),
@@ -57,6 +55,8 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
               children: [
                 _ListTileItem(
                     Icons.analytics_rounded, 'Analytics', StoreAnalytics()),
+                _ListTileItem(
+                    Icons.store_rounded, 'Manage orders', OrdersScreen()),
               ],
             )),
         appBar: AppBar(
@@ -110,97 +110,70 @@ class _SellerHomeScreen extends State<SellerHomeScreen> {
                         crossAxisSpacing: 10,
                         childAspectRatio: itemWidth / itemHeight),
                     itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(
-                                  blurRadius: 10,
-                                  spreadRadius: 0,
-                                  color: Color.fromARGB(78, 0, 0, 0),
-                                  offset: Offset(0, 0))
-                            ]),
-                        child: Scaffold(
-                          backgroundColor: Colors.transparent,
-                          body: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: InkWell(
-                                  onTap: () {
-                                    SellerProductDetailedScreen.index = index;
-                                    Navigator.push(
-                                        context,
-                                        screenRouteTranslation(
-                                            SellerProductDetailedScreen()));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 15),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Image.network(
-                                            SellerHomeScreen.products[index]
-                                                ['product_image'],
-                                            fit: BoxFit.cover,
-                                            width: 150,
-                                            height: 120,
-                                          ),
+                      return GestureDetector(
+                          onTap: () {
+                            SellerProductDetailedScreen.index = index;
+                            Navigator.push(
+                                context,
+                                screenRouteTranslation(
+                                    SellerProductDetailedScreen()));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: mainColor.withOpacity(0.1),
+                            ),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 15),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          SellerHomeScreen.products[index]
+                                              ['product_image'],
+                                          fit: BoxFit.cover,
+                                          width: 150,
+                                          height: 120,
                                         ),
                                       ),
-                                      Container(
-                                          margin: EdgeInsets.all(10),
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            SellerHomeScreen.products[index]
-                                                ['product_name'],
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 18),
-                                          )),
-                                      Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.currency_rupee_rounded,
-                                                size: 15,
-                                              ),
-                                              Text(
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.all(10),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          SellerHomeScreen.products[index]
+                                              ['product_name'],
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontSize: 18),
+                                        )),
+                                    Container(
+                                        margin:
+                                            EdgeInsets.symmetric(horizontal: 5),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.currency_rupee_rounded,
+                                              size: 15,
+                                            ),
+                                            Text(
+                                              SellerHomeScreen.products[index]
+                                                      ['product_price']
+                                                  .toString(),
+                                            ),
+                                            Text(
                                                 SellerHomeScreen.products[index]
-                                                        ['product_price']
-                                                    .toString(),
-                                              ),
-                                              Text(SellerHomeScreen
-                                                      .products[index]
-                                                  ['product_unit'])
-                                            ],
-                                          ))
-                                    ],
-                                  ))),
-                          floatingActionButton: FloatingActionButton(
-                            mini: true,
-                            heroTag: index,
-                            backgroundColor: Colors.green.shade500,
-                            onPressed: () {
-                              FirebaseDatabase.instance
-                                  .ref(
-                                      'sellers/$_uid/products/${SellerHomeScreen.products[index]['product_id']}')
-                                  .remove()
-                                  .whenComplete(() {
-                                _getProducts();
-                              });
-                            },
-                            child: Icon(Icons.delete_outlined),
-                          ),
-                          floatingActionButtonLocation:
-                              FloatingActionButtonLocation.miniEndTop,
-                        ),
-                      );
+                                                    ['product_unit'])
+                                          ],
+                                        ))
+                                  ],
+                                )),
+                          ));
                     })
               ],
             ),

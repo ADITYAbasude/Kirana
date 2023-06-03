@@ -1,4 +1,4 @@
-import 'package:Kirana/constants/ConstantValue.dart';
+import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,16 @@ class OrderDetailScreen extends StatefulWidget {
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   var orderInfo;
   var productInfo;
+
+  String orderStatus = 'Pending';
+
+  List orderStatusList = [
+    'Pending',
+    'Accepted',
+    'Packed',
+    'Shipped',
+    'Delivered',
+  ];
 
   @override
   void initState() {
@@ -82,63 +92,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              // Text(
-                              //   productInfo != null
-                              //       ? productInfo['product_name']
-                              //       : '',
-                              //   maxLines: 1,
-                              //   overflow: TextOverflow.ellipsis,
-                              //   style: const TextStyle(
-                              //       fontSize: 16, fontWeight: FontWeight.bold),
-                              // ),
                               Text(
-                                'Arriving on ${orderInfo != null ? orderInfo['order_date'].compareTo(DateTime.now().toString()) != 0 ? 'Toady' : DateFormat('EEEE').format(DateTime.fromMillisecondsSinceEpoch(int.parse(orderInfo['order_date'].toString()))) : ''}',
+                                'Arriving on ${orderInfo != null ? orderInfo['order_date'].compareTo(DateTime.now().toString()) == 0 ? 'Toady' : DateFormat('EEEE').format(DateTime.fromMillisecondsSinceEpoch(int.parse(orderInfo['order_date'].toString()))) : ''}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              // Container(
-                              //   margin: const EdgeInsets.symmetric(
-                              //       vertical: 5, horizontal: 5),
-                              //   child: Text(
-                              //     productInfo != null
-                              //         ? 'Placed on${DateFormat(" MMMM dd yyyy , h:m").format(date)}'
-                              //         : '',
-                              //     maxLines: 1,
-                              //     overflow: TextOverflow.ellipsis,
-                              //     style: const TextStyle(
-                              //         fontSize: 14, fontWeight: FontWeight.w400),
-                              //   ),
-                              // ),
-                              // Container(
-                              //   margin: const EdgeInsets.symmetric(horizontal: 5),
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //     children: [
-                              //       Text(
-                              //         productInfo != null
-                              //             ? 'Quantity ${orderInfo['product_quantity']}'
-                              //             : '',
-                              //         maxLines: 1,
-                              //         overflow: TextOverflow.ellipsis,
-                              //         style: const TextStyle(
-                              //             fontSize: 15,
-                              //             fontWeight: FontWeight.w400),
-                              //       ),
-                              //       Text(
-                              //         productInfo != null
-                              //             ? 'Price ₹${orderInfo['product_price']}'
-                              //             : '',
-                              //         maxLines: 1,
-                              //         overflow: TextOverflow.ellipsis,
-                              //         style: const TextStyle(
-                              //             fontSize: 15,
-                              //             fontWeight: FontWeight.bold),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // )
                             ],
                           ),
                         ),
@@ -189,32 +149,51 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     alignment: TimelineAlign.manual,
                     lineXY: 0.1,
                     isFirst: true,
-                    beforeLineStyle: LineStyle(thickness: 3),
+                    afterLineStyle: 1 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
                     indicatorStyle: IndicatorStyle(
-                      width: 30,
-                      height: 30,
-                      padding: EdgeInsets.all(5),
-                      indicator: Container(
+                        width:
+                            1 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        height:
+                            1 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
                         padding: EdgeInsets.all(5),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.green,
-                        ),
-                        child: Center(
-                            child: Image.asset(
-                                'assets/icons/done-with-animated.gif')),
-                      ),
-                    ),
+                        indicator: 1 <= orderStatusList.indexOf(orderStatus)
+                            ? Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.green,
+                                ),
+                                child: Center(
+                                    child: Image.asset(
+                                        'assets/icons/done-with-animated.gif')),
+                              )
+                            : Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                ),
+                              )),
                     endChild: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Order confirmed',
+                          Text(
+                              1 <= orderStatusList.indexOf(orderStatus)
+                                  ? 'Order confirmed'
+                                  : 'Order confirmation',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text('Seller accepted the order'),
+                          1 <= orderStatusList.indexOf(orderStatus)
+                              ? const Text(
+                                  '',
+                                  style: TextStyle(fontSize: 0),
+                                )
+                              : Text(
+                                  'Waiting from seller site to accept the order'),
                           // Text(
                           //     'Order placed on ${DateFormat(" MMMM dd yyyy , h:m").format(date)}'),
                         ],
@@ -225,24 +204,53 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     alignment: TimelineAlign.manual,
                     lineXY: 0.1,
                     hasIndicator: true,
-                    beforeLineStyle: const LineStyle(
-                      thickness: 3,
-                    ),
+                    afterLineStyle: 2 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
+                    beforeLineStyle: 2 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
                     indicatorStyle: IndicatorStyle(
-                      width: 20,
-                      height: 20,
-                      padding: EdgeInsets.all(5),
-                    ),
+                        width:
+                            2 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        height:
+                            2 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        padding: EdgeInsets.all(5),
+                        indicator: 2 <= orderStatusList.indexOf(orderStatus)
+                            ? Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.green,
+                                ),
+                                child: Center(
+                                    child: Image.asset(
+                                        'assets/icons/done-with-animated.gif')),
+                              )
+                            : Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                ),
+                              )),
                     endChild: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Order packaging',
+                          Text(
+                              2 <= orderStatusList.indexOf(orderStatus)
+                                  ? 'Order packed'
+                                  : 'Order packaging',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
-                          Text('Your order is being packed'),
+                          2 <= orderStatusList.indexOf(orderStatus)
+                              ? const Text(
+                                  '',
+                                  style: TextStyle(fontSize: 0),
+                                )
+                              : Text('Your order is being packed'),
                           // Text(
                           //     'Order placed on ${DateFormat(" MMMM dd yyyy , h:m").format(date)}'),
                         ],
@@ -252,12 +260,35 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   TimelineTile(
                     alignment: TimelineAlign.manual,
                     hasIndicator: true,
-                    beforeLineStyle: LineStyle(thickness: 3),
+                    afterLineStyle: 3 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
+                    beforeLineStyle: 3 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
                     indicatorStyle: IndicatorStyle(
-                      width: 20,
-                      height: 20,
-                      padding: EdgeInsets.all(5),
-                    ),
+                        width:
+                            3 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        height:
+                            3 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        padding: EdgeInsets.all(5),
+                        indicator: 3 <= orderStatusList.indexOf(orderStatus)
+                            ? Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.green,
+                                ),
+                                child: Center(
+                                    child: Image.asset(
+                                        'assets/icons/done-with-animated.gif')),
+                              )
+                            : Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                ),
+                              )),
                     lineXY: 0.1,
                     // isLast: true,
                     endChild: Container(
@@ -279,12 +310,35 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   TimelineTile(
                     alignment: TimelineAlign.manual,
                     hasIndicator: true,
-                    beforeLineStyle: LineStyle(thickness: 3),
+                    afterLineStyle: 4 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
+                    beforeLineStyle: 4 <= orderStatusList.indexOf(orderStatus)
+                        ? LineStyle(thickness: 4, color: Colors.green)
+                        : LineStyle(thickness: 3, color: Colors.grey),
                     indicatorStyle: IndicatorStyle(
-                      width: 20,
-                      height: 20,
-                      padding: EdgeInsets.all(5),
-                    ),
+                        width:
+                            4 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        height:
+                            4 <= orderStatusList.indexOf(orderStatus) ? 30 : 20,
+                        padding: EdgeInsets.all(5),
+                        indicator: 4 <= orderStatusList.indexOf(orderStatus)
+                            ? Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.green,
+                                ),
+                                child: Center(
+                                    child: Image.asset(
+                                        'assets/icons/done-with-animated.gif')),
+                              )
+                            : Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                ),
+                              )),
                     lineXY: 0.1,
                     isLast: true,
                     endChild: Container(
@@ -337,6 +391,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           orderInfo = value.value as Map;
           date = DateTime.fromMillisecondsSinceEpoch(
               int.parse(orderInfo['order_date'].toString()));
+          orderStatus = orderInfo['order_status'];
         });
         _getProductInfo();
       }
