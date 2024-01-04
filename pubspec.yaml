@@ -53,7 +53,6 @@ dependencies:
   geolocator: ^9.0.2
   geocoding: ^2.0.5
   palette_generator: ^0.3.3+2
-  geocoder: ^0.2.1
   flutter_rating_bar: ^4.0.1
   day_night_time_picker: ^1.2.0+2
   intl: ^0.17.0
@@ -62,6 +61,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   timeline_tile: ^2.0.0
   dio: ^5.1.2
+  firebase_core_platform_interface: 4.5.1
+  firebase_messaging: ^13.0.4
 
 dev_dependencies:
   flutter_test:

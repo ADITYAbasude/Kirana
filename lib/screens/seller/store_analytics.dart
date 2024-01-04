@@ -114,7 +114,7 @@ class _StoreAnalyticsState extends State<StoreAnalytics> {
                   minimum: ordersInfo.isNotEmpty
                       ? ordersInfo[0].date
                       : DateTime.now(),
-                  // maximum: DateTime.now(),
+                  maximum: DateTime.now(),
                   // interval: 2,
                 ),
                 annotations: [

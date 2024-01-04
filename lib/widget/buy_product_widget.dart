@@ -230,7 +230,8 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
-                    var paymentIntent = await createPaymentIntent(34, 'INR');
+                    var paymentIntent = await createPaymentIntent(
+                        widget.productData['product_price'], 'INR');
                     var paymentSheet = await Stripe.instance.initPaymentSheet(
                         paymentSheetParameters: SetupPaymentSheetParameters(
                       // Main params
@@ -248,7 +249,9 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
 
                     await Stripe.instance.presentPaymentSheet().then((value) {
                       _orderProduct();
-                    }).onError((error, stackTrace) {});
+                    }).onError((error, stackTrace) {
+                      showSnackBar(context, 'Payment failed');
+                    });
                   },
                   label: Text(
                     _paymentMethods == PaymentMethods.Online ? "Pay" : 'Order',
@@ -328,7 +331,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
     }
   }
 
-  dynamic createPaymentIntent(int amount, String currency) async {
+  dynamic createPaymentIntent(double amount, String currency) async {
     final dio = Dio();
     try {
       var response = await dio.post("https://api.stripe.com/v1/payment_intents",
@@ -337,7 +340,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                 'Bearer sk_test_51N01KGSGkthyrkckIaXtj0BAOFMQe1mdfW7jYqGNbYNKcSEM87EofN4uM1MYgcNU7gzS4BCN8SuSQx4gBDfrMVMI00nCBT7bRM',
             'Content-Type': 'application/x-www-form-urlencoded',
           }),
-          queryParameters: {'amount': 1000, 'currency': currency});
+          queryParameters: {'amount': amount, 'currency': currency});
       return response.data;
     } catch (e) {
       print(e);

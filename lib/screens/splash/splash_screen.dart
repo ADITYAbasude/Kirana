@@ -163,9 +163,10 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  void _mostOrderedProductsInTheApp() async {
-    _showProgressBar = true;
-  }
+// TODO: this function could be introducted in the future to show the most ordered products in the app, but for now it is not added
+  // void _mostOrderedProductsInTheApp() async {
+  //   _showProgressBar = true;
+  // }
 
   @override
   Widget build(BuildContext context) {

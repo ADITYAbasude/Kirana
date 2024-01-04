@@ -12,11 +12,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 // import 'package:Kirana/constants/geo_locator.dart';
 import 'package:Kirana/tools/SnackBar.dart';
 import 'package:Kirana/tools/loading.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -127,7 +127,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                                                 child: const Image(
                                                     fit: BoxFit.cover,
                                                     image: CachedNetworkImageProvider(
-                                                        "https://raw.githubusercontent.com/ADITYAbasude/Shopify/master/frontend/src/components/data/img/user.png")))
+                                                        "https://raw.githubusercontent.com/ADITYAbasude/Kirana/master/assets/images/user.png")))
                                             : ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(100),
@@ -417,8 +417,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
       fStorage = FirebaseStorage.instance;
 
       // convert address in latlng
-      var coordinate = await Geocoder.local
-          .findAddressesFromQuery(_shopAddressController.text);
+      var coordinate = await locationFromAddress(_shopAddressController.text);
 
       // it's a database reference
       Reference ref =
@@ -440,8 +439,8 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
         'shop_contact_number': shopContactNumberData.toString(),
         'seller_id': uid,
         "seller_name": username['name'],
-        'lat': coordinate[0].coordinates.latitude.toString(),
-        'lng': coordinate[0].coordinates.longitude.toString(),
+        'lat': coordinate[0].latitude.toString(),
+        'lng': coordinate[0].longitude.toString(),
         'account_created_date':
             DateTime.now().millisecondsSinceEpoch.toString(),
       };
