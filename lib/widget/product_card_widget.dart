@@ -51,12 +51,12 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(bottom: 10, left: 5),
+                margin: const EdgeInsets.only(bottom: 4, left: 2),
                 child: Text(
                   widget.productData['product_name'],
                   maxLines: 1,
                   style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       overflow: TextOverflow.ellipsis),
                 ),
@@ -71,14 +71,16 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
                       children: [
                         const Icon(Icons.currency_rupee_rounded),
                         Container(
-                          child: Text(
-                              widget.productData['product_price'].toString() +
-                                  " ",
+                          child: Text("${widget.productData['product_price']} ",
+                              maxLines: 1,
                               style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600)),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              )),
                         ),
                         Text(
                           widget.productData['product_unit'],
+                          maxLines: 1,
                           style: const TextStyle(fontSize: 12),
                         )
                       ],

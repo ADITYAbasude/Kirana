@@ -84,7 +84,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                           Container(
                             margin: const EdgeInsets.symmetric(

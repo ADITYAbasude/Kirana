@@ -173,6 +173,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (_showProgressBar == false) {
       Timer(
           Duration(milliseconds: 500),
+          // ignore: unnecessary_set_literal
           () => {
                 if (auth != null)
                   {

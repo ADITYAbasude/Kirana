@@ -37,10 +37,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen> {
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: Stack(children: [
           ScrollConfiguration(
-              behavior: const ScrollBehavior(
-                  // ignore: deprecated_member_use
-                  androidOverscrollIndicator:
-                      AndroidOverscrollIndicator.stretch),
+              behavior: ScrollBehavior(),
               child: SingleChildScrollView(
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

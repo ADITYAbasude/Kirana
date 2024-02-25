@@ -6,9 +6,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
+// ignore: must_be_immutable
 class BuyProductWidget extends StatefulWidget {
   final controller;
   final productData;
@@ -34,10 +34,6 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
   String _paymentType = PaymentMethods.Online.toString();
 
   late int _totalOrdersOfProduct;
-
-  BillingDetails? _billingDetails;
-
-  final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   @override
   void initState() {
@@ -230,23 +226,6 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
-                    var paymentIntent = await createPaymentIntent(
-                        widget.productData['product_price'], 'INR');
-                    var paymentSheet = await Stripe.instance.initPaymentSheet(
-                        paymentSheetParameters: SetupPaymentSheetParameters(
-                      // Main params
-                      paymentIntentClientSecret: paymentIntent['client_secret'],
-                      merchantDisplayName: 'Kirana',
-                      // Customer params
-                      customerId: uid,
-                      googlePay: PaymentSheetGooglePay(
-                        merchantCountryCode: 'DE',
-                        testEnv: true,
-                      ),
-                      style: ThemeMode.light,
-                      billingDetails: _billingDetails,
-                    ));
-
                     await Stripe.instance.presentPaymentSheet().then((value) {
                       _orderProduct();
                     }).onError((error, stackTrace) {

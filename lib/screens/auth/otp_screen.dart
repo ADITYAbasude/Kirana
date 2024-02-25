@@ -10,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/auth/login_signup_screen.dart';
-import 'package:Kirana/screens/main_screen.dart';
 import 'package:Kirana/screens/splash/splash_screen.dart';
 import 'package:pinput/pinput.dart';
 
@@ -57,8 +56,7 @@ class _OTPScreenState extends State<OTPScreen> {
         ),
         body: Stack(children: [
           ScrollConfiguration(
-            behavior: const ScrollBehavior(
-                androidOverscrollIndicator: AndroidOverscrollIndicator.stretch),
+            behavior: const ScrollBehavior(),
             child: SingleChildScrollView(
                 child: Column(children: [
               Container(

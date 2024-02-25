@@ -117,11 +117,6 @@ class _StoreAnalyticsState extends State<StoreAnalytics> {
                   maximum: DateTime.now(),
                   // interval: 2,
                 ),
-                annotations: [
-                  CartesianChartAnnotation(
-                    widget: Center(child: Text('Hello')),
-                  )
-                ],
                 title: ChartTitle(text: 'Orders per day'),
                 tooltipBehavior: TooltipBehavior(enable: true),
                 series: <ChartSeries<ordersInfoObject, DateTime>>[
@@ -150,7 +145,6 @@ class _StoreAnalyticsState extends State<StoreAnalytics> {
         .get()
         .then((value) {
       for (var order in value.children) {
-        var orderData = order.value as Map;
         setState(() {
           orders.add(order.value);
         });

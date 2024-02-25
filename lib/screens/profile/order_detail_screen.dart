@@ -391,7 +391,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           orderInfo = value.value as Map;
           date = DateTime.fromMillisecondsSinceEpoch(
               int.parse(orderInfo['order_date'].toString()));
-          orderStatus = orderInfo['order_status'];
+          orderStatus = orderInfo['order_status'] ?? 'Pending';
         });
         _getProductInfo();
       }

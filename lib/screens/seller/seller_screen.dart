@@ -10,7 +10,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/seller/add_seller_detail_screen.dart';
 import 'package:Kirana/screens/seller/seller_home_screen.dart';
-import 'package:Kirana/tools/Toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/screen_route_translation.dart';

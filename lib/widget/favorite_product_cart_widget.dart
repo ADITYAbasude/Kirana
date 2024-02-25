@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/utils/get_info.dart';
-import 'package:Kirana/utils/add_cart_functions.dart';
 
 import '../utils/screen_size.dart';
 import '../screens/home/product_detail_screen.dart';

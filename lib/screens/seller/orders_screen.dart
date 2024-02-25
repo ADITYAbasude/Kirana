@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../../utils/screen_route_translation.dart';
 import '../../widget/order_card_widget.dart';
-import '../profile/order_detail_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({Key? key}) : super(key: key);

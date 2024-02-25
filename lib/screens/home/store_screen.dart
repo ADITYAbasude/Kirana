@@ -4,8 +4,6 @@ import 'package:Kirana/utils/screen_size.dart';
 import 'package:Kirana/constants/SystemColors.dart';
 import 'package:Kirana/widget/store_products_cart_widget.dart';
 
-import '../../widget/product_card_widget.dart';
-
 class StoreScreen extends StatefulWidget {
   StoreScreen(this.shopData);
   var shopData;

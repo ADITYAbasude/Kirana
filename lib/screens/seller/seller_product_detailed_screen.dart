@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:Kirana/screens/seller/seller_home_screen.dart';
-import 'package:Kirana/utils/get_info.dart';
 import '../../widget/product_manage_widget.dart';
 
 class SellerProductDetailedScreen extends StatefulWidget {
@@ -28,7 +26,8 @@ class _SellerProductDetailedScreenState
               1000)
           .toString()
       : SellerHomeScreen.products[SellerProductDetailedScreen.index!]
-          ['product_stock'];
+              ['product_stock']
+          .toString();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

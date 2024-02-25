@@ -54,8 +54,6 @@ var downloadUrl;
 DatabaseReference _dbRef = FirebaseDatabase.instance.ref('sellers');
 
 class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
-  String _storeTypeValue = _storeTypeList.first;
-
 // it will store the selected image by user
   File? _image;
 
@@ -85,9 +83,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
             Container(
               height: MediaQuery.of(context).size.height,
               child: ScrollConfiguration(
-                behavior: const ScrollBehavior(
-                    androidOverscrollIndicator:
-                        AndroidOverscrollIndicator.stretch),
+                behavior: const ScrollBehavior(),
                 child: SingleChildScrollView(
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,7 +123,7 @@ class _AddSellerDetailScreenState extends State<AddSellerDetailScreen> {
                                                 child: const Image(
                                                     fit: BoxFit.cover,
                                                     image: CachedNetworkImageProvider(
-                                                        "https://raw.githubusercontent.com/ADITYAbasude/Kirana/master/assets/images/user.png")))
+                                                        "https://res-console.cloudinary.com/drwviska5/media_explorer_thumbnails/1be23b0c9545fe248798e7bb5f52e9ea/detailed")))
                                             : ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(100),

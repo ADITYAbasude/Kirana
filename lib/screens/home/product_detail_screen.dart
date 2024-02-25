@@ -7,7 +7,6 @@
 
 import 'dart:async';
 
-import 'package:Kirana/main.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -492,6 +491,7 @@ class ProductInfoWidget extends StatelessWidget {
                     if (snapshot.hasData) {
                       return Text(
                         snapshot.data.toString(),
+                        overflow: TextOverflow.fade,
                         style: TextStyle(
                             color: linkColor,
                             fontWeight: FontWeight.w500,

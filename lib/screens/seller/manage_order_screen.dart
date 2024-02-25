@@ -1,8 +1,6 @@
 import 'package:Kirana/tools/Toast.dart';
-import 'package:Kirana/tools/loading.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../constants/SystemColors.dart';
@@ -378,9 +376,10 @@ class _ManageOrderScreenState extends State<ManageOrderScreen> {
           orderInfo = value.value as Map;
           date = DateTime.fromMillisecondsSinceEpoch(
               int.parse(orderInfo['order_date'].toString()));
-          orderStatus = orderInfo['order_status'];
+          orderStatus = orderInfo['order_status'] != null
+              ? orderInfo['order_status']
+              : 'unknown';
         });
-        showToast(orderInfo['order_status']);
         _getProductInfo();
       }
     });
